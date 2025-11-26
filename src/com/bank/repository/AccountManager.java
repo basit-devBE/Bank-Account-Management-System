@@ -54,4 +54,13 @@ public class AccountManager {
         System.arraycopy(accounts, 0, newAccounts, 0, accounts.length);
         accounts = newAccounts;
     }
+
+    public Account getAccountDetail(String accountNumber) {
+        for (int i = 0; i < accountCount; i++) {
+            if (accounts[i].getAccountNumber().equals(accountNumber)) {
+                return accounts[i];
+            }
+        }
+        return null; 
+    }
 }

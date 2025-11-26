@@ -2,6 +2,7 @@ package com.bank.controllers;
 import java.util.Scanner;
 import java.util.UUID;
 
+import com.bank.models.CheckingAccount;
 import com.bank.models.Customer;
 import com.bank.models.SavingsAccount;
 import com.bank.models.enums.CustomerType;
@@ -26,14 +27,22 @@ public class Account {
         email = scanner.nextLine().trim();
         System.out.println("Enter initial deposit amount: ");
         initialDeposit = Double.parseDouble(scanner.nextLine().trim());
-        scanner.nextLine();
         switch(accountType.toLowerCase()){
             case "savings":{
                 Customer accountHolder = new Customer(accountHolderName,email,CustomerType.Regular);
                 SavingsAccount newAccount = new SavingsAccount(accountNumber,accountHolder, initialDeposit);
                 accountManager.addAccount(newAccount);
                 customerManager.addCustomer(accountHolder);
-                System.out.println("Savings account created successfully. Account Number: " + accountNumber);
+                System.out.println("Savings account created successfully. Account Details: " + accountManager.getAccountDetail(accountNumber));
+                break;
+            }
+
+            case "checking":{
+                Customer accountHolder = new Customer(accountHolderName, email, CustomerType.Regular);
+                CheckingAccount newAccount = new CheckingAccount(accountNumber, accountHolder, initialDeposit);
+                accountManager.addAccount(newAccount);
+                customerManager.addCustomer(accountHolder);
+                System.out.println("Savings account created successfully. Account Details: " + accountManager.getAccountDetail(accountNumber));
                 break;
             }
         }
