@@ -27,15 +27,25 @@ public class AccountManager {
         return null; 
     }
     
-    public void viewAllAccounts() {
+   public void viewAllAccounts() {
         if (accountCount == 0) {
             System.out.println("No accounts found.");
             return;
         }
+        
+        System.out.println("\nACCOUNT LISTING");
+        System.out.println("─".repeat(85));
+        System.out.printf("%-10s | %-20s | %-10s | %-15s | %-10s%n",
+                "ACC NO", "CUSTOMER NAME", "TYPE", "BALANCE", "STATUS");
+        System.out.println("─".repeat(85));
+        
         for (int i = 0; i < accountCount; i++) {
-            System.out.println(accounts[i]);
+            System.out.println(accounts[i].getAccountSummary());
+            System.out.println("─".repeat(85));
         }
         
+        System.out.println("\nTotal Accounts: " + accountCount);
+        System.out.println("Total Bank Balance: $" + String.format("%,.2f", getTotalBalance()));
     }
     
     public double getTotalBalance() {

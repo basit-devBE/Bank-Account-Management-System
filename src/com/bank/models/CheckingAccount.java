@@ -10,4 +10,16 @@ public class CheckingAccount extends Account{
         super(accountNumber, AccountType.CHECKING,accountHolder,initialDeposit);
     }
 
+     @Override
+    public String getCreationMessage() {
+        return super.getCreationMessage() +
+               "\n   Overdraft Limit: $" + String.format("%.2f", overdraftLimit) +
+               "\n   Monthly Fee: $" + String.format("%.2f", monthlyFee);
+    }
+
+    // @Override
+    // public String getAccountSummary() {
+    //     return super.getAccountSummary();
+    // }
+
 }

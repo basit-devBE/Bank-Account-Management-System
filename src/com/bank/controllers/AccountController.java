@@ -9,7 +9,7 @@ import com.bank.models.enums.AccountType;
 import com.bank.models.enums.CustomerType;
 import com.bank.repository.AccountManager;
 import com.bank.repository.CustomerManager;
-public class Account {
+public class AccountController {
     AccountManager accountManager = new AccountManager();
     CustomerManager customerManager = new CustomerManager();
     Scanner scanner = new Scanner(System.in);
@@ -45,7 +45,7 @@ public class Account {
                 SavingsAccount newAccount = new SavingsAccount(accountNumber,accountHolder, initialDeposit);
                 accountManager.addAccount(newAccount);
                 customerManager.addCustomer(accountHolder);
-                System.out.println("Savings account created successfully. Account Details: " + accountManager.getAccountDetail(accountNumber));
+                System.out.println(newAccount.getCreationMessage()); 
                 break;
             }
 
@@ -54,7 +54,7 @@ public class Account {
                 CheckingAccount newAccount = new CheckingAccount(accountNumber, accountHolder, initialDeposit);
                 accountManager.addAccount(newAccount);
                 customerManager.addCustomer(accountHolder);
-                System.out.println("Savings account created successfully. Account Details: " + accountManager.getAccountDetail(accountNumber));
+                System.out.println(newAccount.getCreationMessage());
                 break;
             }
         }

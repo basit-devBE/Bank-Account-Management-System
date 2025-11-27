@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class MenuController {
     Scanner scanner = new Scanner(System.in);
-    Account accountController = new Account();
+    AccountController accountController = new AccountController();
 
     public void start(){
         boolean running = true;

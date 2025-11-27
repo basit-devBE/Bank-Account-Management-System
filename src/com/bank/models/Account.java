@@ -70,9 +70,11 @@ public abstract class Account implements AccountOperations {
     }
 
     public String getAccountSummary(){
-        String accountInfo = String.format("Account Number: %s | Type: %s | Balance: $%.2f %s | Holder: %s (%s)",
-                accountNumber, accountType, balance, currency, accountHolder.getName(), accountHolder.getCustomerType());
-        return accountInfo;
+       return String.format("%-10s | %-20s | %-10s | $%-13s | Active",
+                accountNumber.substring(0, Math.min(6, accountNumber.length())), // Shorten UUID
+                accountHolder.getName().length() > 20 ? accountHolder.getName().substring(0, 17) + "..." : accountHolder.getName(),
+                accountType,
+                String.format("%,.2f", balance));
     }
 }
 
