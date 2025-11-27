@@ -7,7 +7,7 @@ public class CheckingAccount extends Account{
     private  double monthlyFee = 10.0;
 
     public CheckingAccount(String accountNumber, Customer accountHolder,double initialDeposit) {
-        super(accountNumber, AccountType.CheckingAccount,accountHolder,initialDeposit);
+        super(accountNumber, AccountType.CHECKING,accountHolder,initialDeposit);
     }
 
 }

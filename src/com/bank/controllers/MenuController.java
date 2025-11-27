@@ -16,7 +16,7 @@ public class MenuController {
                     accountController.createAccount();
                     break;
                 case "2":
-                    // accountController.depositFunds();
+                    accountController.viewAllAccounts();
                     break;
                 case "3":
                     // accountController.withdrawFunds();
@@ -40,7 +40,7 @@ public class MenuController {
 private void displayMenu(){
     System.out.println("Welcome to the Bank Account Management System");
     System.out.println("1. Create Account");
-    System.out.println("2. Deposit Funds");
+    System.out.println("2. View Accounts");
     System.out.println("3. Withdraw Funds");
     System.out.println("4. Check Balance");
     System.out.println("5. Exit");

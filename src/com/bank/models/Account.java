@@ -28,12 +28,13 @@ public abstract class Account implements AccountOperations {
 
     @Override
     public String toString() {
-        return "Account{" +
-                "accountNumber='" + accountNumber + '\'' +
-                ", accountType=" + accountType +
-                ", balance=" + balance +
-                ", currency='" + currency + '\'' +
-                '}';
+    return "Account{" +
+           "accountNumber='" + accountNumber + '\'' +
+           ", accountHolder=" + accountHolder.getName() +
+           ", accountType=" + accountType +
+           ", balance=$" + String.format("%.2f", balance) +
+           ", currency='" + currency + '\'' +
+           '}';
     }
     @Override
     public void deposit(double amount){
@@ -56,6 +57,22 @@ public abstract class Account implements AccountOperations {
     @Override
     public double checkBalance(){
         return balance;
+    }
+
+    public String getCreationMessage(){
+    return "\n✓ Account created successfully!" +
+           "\n   Account Number: " + accountNumber +
+           "\n   Customer: " + accountHolder.getName() + " (" + accountHolder.getCustomerType() + ")" +
+           "\n   Account Type: " + accountType +
+           "\n   Initial Balance: $" + String.format("%.2f", balance) +
+           "\n   Currency: " + currency +
+           "\n   Status: Active";
+    }
+
+    public String getAccountSummary(){
+        String accountInfo = String.format("Account Number: %s | Type: %s | Balance: $%.2f %s | Holder: %s (%s)",
+                accountNumber, accountType, balance, currency, accountHolder.getName(), accountHolder.getCustomerType());
+        return accountInfo;
     }
 }
 

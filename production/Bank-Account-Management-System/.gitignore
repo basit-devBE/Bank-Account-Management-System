@@ -27,5 +27,4 @@ bin/
 .vscode/
 
 ### Mac OS ###
-.DS_Store4
-*.class
+.DS_Store
