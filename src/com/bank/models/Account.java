@@ -25,6 +25,10 @@ public abstract class Account implements AccountOperations {
     public AccountType getAccountType() {
         return accountType;
     }
+    
+    public Customer getAccountHolder() {
+        return accountHolder;
+    }
 
     @Override
     public String toString() {
@@ -41,7 +45,7 @@ public abstract class Account implements AccountOperations {
     public void deposit(double amount){
         if( amount > 0){
             balance += amount;
-            
+
         } else {
             System.out.println("Deposit amount must be positive.");
         }
