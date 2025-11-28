@@ -1,0 +1,1 @@
+This project is a console project mimicking the inner workings of a Bank Management system. It allows users to create and manage bank accounts, perform transactions, and view account details. The system supports different account types (savings and checking) and includes role-based access control for customers and managers.
