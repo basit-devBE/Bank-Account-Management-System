@@ -23,6 +23,61 @@ public class TransactionManager {
         System.arraycopy(transactions, 0, newTransactions, 0, transactions.length);
         transactions = newTransactions;
     }
+
+    public void viewAllTransactions() {
+        if (transactionCount == 0) {
+            System.out.println("No transactions found.");
+            return;
+        }
+
+        System.out.println("\nTRANSACTION HISTORY");
+        System.out.println("─".repeat(100));
+        System.out.printf("%-15s | %-10s | %-10s | %-15s | %-15s | %-10s%n",
+                "TRANSACTION ID", "TYPE", "AMOUNT", "ACCOUNT NO", "DATE", "STATUS");
+        System.out.println("─".repeat(100));
+
+        for (int i = 0; i < transactionCount; i++) {
+            Transaction t = transactions[i];
+            System.out.printf("%-15s | %-10s | $%-9.2f | %-15s | %-15s | %-10s%n",
+                    t.getTransactionId(),
+                    t.getTransactionType(),
+                    t.getAmount(),
+                    t.getAccount().getAccountNumber(),
+                    t.getDate(),
+                    t.status);
+            System.out.println("─".repeat(100));
+        }
+
+        System.out.println("\nTotal Transactions: " + transactionCount);
+    }
+
+    public void viewTransactionsByAccount(String accountNumber) {
+        boolean found = false;
+        System.out.println("\nTRANSACTION HISTORY FOR ACCOUNT: " + accountNumber);
+        System.out.println("─".repeat(100));
+        System.out.printf("%-15s | %-10s | %-10s | %-15s | %-15s | %-10s%n",
+                "TRANSACTION ID", "TYPE", "AMOUNT", "ACCOUNT NO", "DATE", "STATUS");
+        System.out.println("─".repeat(100));
+
+        for (int i = 0; i < transactionCount; i++) {
+            Transaction t = transactions[i];
+            if (t.getAccount().getAccountNumber().equals(accountNumber)) {
+                found = true;
+                System.out.printf("%-15s | %-10s | $%-9.2f | %-15s | %-15s | %-10s%n",
+                        t.getTransactionId(),
+                        t.getTransactionType(),
+                        t.getAmount(),
+                        t.getAccount().getAccountNumber(),
+                        t.getDate(),
+                        t.status);
+                System.out.println("─".repeat(100));
+            }
+        }
+
+        if (!found) {
+            System.out.println("No transactions found for this account.");
+        }
+    }
     
 
 }

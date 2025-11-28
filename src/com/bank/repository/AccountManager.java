@@ -1,6 +1,7 @@
 package com.bank.repository;
 
 import com.bank.models.Account;
+import com.bank.models.Transaction;
 
 public class AccountManager {
     private Account[] accounts;
@@ -73,5 +74,11 @@ public class AccountManager {
             }
         }
         return null; 
+    }
+
+    public void deposit(Transaction transaction) {
+        Account account = transaction.getAccount();
+        double amount = transaction.getAmount();
+        account.deposit(amount);
     }
 }

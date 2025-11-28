@@ -10,9 +10,13 @@ import com.bank.models.enums.CustomerType;
 import com.bank.repository.AccountManager;
 import com.bank.repository.CustomerManager;
 public class AccountController {
-    AccountManager accountManager = new AccountManager();
-    CustomerManager customerManager = new CustomerManager();
-    Scanner scanner = new Scanner(System.in);
+    private AccountManager accountManager;
+    private CustomerManager customerManager = new CustomerManager();
+    private Scanner scanner = new Scanner(System.in);
+
+    public AccountController(AccountManager accountManager) {
+        this.accountManager = accountManager;
+    }
 
     public void createAccount(){
         System.out.println("Enter the account type (Savings/Checking): ");
@@ -25,7 +29,7 @@ public class AccountController {
     
         int age;
         double initialDeposit;
-        accountNumber = UUID.randomUUID().toString();
+        accountNumber = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
         System.out.println("Enter account holder name: ");
         accountHolderName = scanner.nextLine().trim();
         System.out.println("Enter account holder address: ");
