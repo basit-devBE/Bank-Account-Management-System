@@ -150,6 +150,152 @@ src/
 
 ---
 
+## Architecture & Design Patterns
+
+### Separation of Concerns (MVC-Inspired Pattern)
+
+This project implements a **layered architecture** that separates concerns into distinct layers, making the code maintainable, testable, and scalable. The architecture follows a modified MVC (Model-View-Controller) pattern adapted for console applications.
+
+#### **1. Models Layer** (`com/bank/models/`)
+**Responsibility**: Represents the domain entities and business logic
+
+**What Models Do:**
+- Define the data structure and state of business entities
+- Encapsulate business rules and validation logic
+- Contain no knowledge of how data is stored or presented
+- Implement core business operations (e.g., `withdraw()`, `deposit()`)
+
+**Key Models:**
+- `Account.java` - Abstract base class for all accounts with common properties and operations
+- `SavingsAccount.java` / `CheckingAccount.java` - Specific account implementations with unique rules
+- `Customer.java` - Represents customer/manager entities with role-based attributes
+- `Transaction.java` - Immutable transaction records with status tracking
+
+**Example**: `SavingsAccount` enforces minimum balance rules - this is business logic that belongs in the model, not in controllers or repositories.
+
+```java
+// Business logic in the model
+public void withdraw(double amount) {
+    if ((currentBalance - amount) >= MIN_BALANCE) {
+        super.withdraw(amount);
+    } else {
+        // Business rule enforcement
+    }
+}
+```
+
+#### **2. Controllers Layer** (`com/bank/controllers/`)
+**Responsibility**: Handles user interaction and application flow
+
+**What Controllers Do:**
+- Receive user input from the console
+- Validate and sanitize input data
+- Coordinate between repositories and models
+- Control application workflow and navigation
+- Format and display output to users
+- **Do NOT contain business logic** - delegate to models
+
+**Key Controllers:**
+- `MenuController.java` - Main application flow and menu navigation
+- `AccountController.java` - Handles account creation and viewing workflows
+- `TransactionController.java` - Manages transaction processing workflows
+
+**Example**: `AccountController` doesn't know how to store accounts - it delegates to `AccountManager`:
+
+```java
+// Controller coordinates but doesn't implement storage
+public void createAccount() {
+    // 1. Get user input
+    // 2. Create model object
+    SavingsAccount newAccount = new SavingsAccount(accountNumber, holder, deposit);
+    // 3. Delegate storage to repository
+    accountManager.addAccount(newAccount);
+    // 4. Display result to user
+}
+```
+
+#### **3. Repository Layer** (`com/bank/repository/`)
+**Responsibility**: Manages data storage, retrieval, and persistence
+
+**What Repositories Do:**
+- Abstract away data storage implementation details
+- Provide CRUD operations (Create, Read, Update, Delete)
+- Manage collections of domain objects
+- Handle data access logic (searching, filtering, aggregating)
+- **Do NOT contain business logic** - only data operations
+
+**Key Repositories:**
+- `AccountManager.java` - Stores and retrieves accounts
+- `CustomerManager.java` - Manages customer records
+- `TransactionManager.java` - Maintains transaction history
+
+**Example**: `AccountManager` handles storage without knowing business rules:
+
+```java
+// Repository only handles data operations
+public void addAccount(Account account) {
+    if (accountCount >= accounts.length) {
+        resizeArray(); // Infrastructure concern
+    }
+    accounts[accountCount++] = account; // Storage operation
+}
+```
+
+### Why This Separation Matters
+
+#### **1. Single Responsibility Principle**
+Each layer has ONE clear responsibility:
+- **Models** = Business logic and domain rules
+- **Controllers** = User interaction and flow control
+- **Repositories** = Data storage and retrieval
+
+#### **2. Maintainability**
+- Changing storage (e.g., from arrays to database) only affects repositories
+- Changing business rules only affects models
+- Changing UI (e.g., from console to GUI) only affects controllers
+
+#### **3. Testability**
+- Can test business logic in models independently
+- Can test data operations without UI
+- Can mock repositories to test controllers
+
+#### **4. Scalability**
+- Easy to add new account types (extend models)
+- Easy to add new operations (add controller methods)
+- Easy to switch storage mechanisms (modify repositories)
+
+#### **5. Code Reusability**
+- Models can be used by different controllers
+- Repositories can serve multiple controllers
+- Same model can have different presentation formats
+
+### Data Flow Example: Creating an Account
+
+```
+User Input (Console)
+       ↓
+MenuController.start() 
+       ↓
+AccountController.createAccount()
+       ↓ (gather input & validate)
+Create Model: new SavingsAccount(...)
+       ↓ (business logic in model constructor)
+AccountManager.addAccount(account)
+       ↓ (storage logic in repository)
+Data Stored in Array
+       ↓
+Return to Controller
+       ↓
+Display Success Message to User
+```
+
+**Notice how each layer only talks to adjacent layers:**
+- Controllers use Repositories and Models
+- Models are independent (no dependencies)
+- Repositories store Models (no UI knowledge)
+
+---
+
 ## OOP Concepts Applied
 
 ### 1. **Abstraction**
