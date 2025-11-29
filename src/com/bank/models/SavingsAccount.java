@@ -44,4 +44,14 @@ public class SavingsAccount extends Account{
         deposit(monthlyInterest);
         System.out.println("✓ Monthly interest applied: $" + String.format("%.2f", monthlyInterest));
     }
+
+    @Override
+    public String getAccountDetails(){
+        String minBalanceInfo = (getAccountHolder().getCustomerType() == CustomerType.PREMIUM) 
+            ? "None (Premium Customer)" 
+            : "$" + String.format("%,.2f", MIN_BALANCE);
+        return super.getAccountDetails() +
+               "\n  Interest Rate: " + String.format("%.1f%%", INTEREST_RATE * 100) + " annual" +
+               "\n  Minimum Balance: " + minBalanceInfo;
+    }
 }

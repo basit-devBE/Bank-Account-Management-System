@@ -48,4 +48,14 @@ public class CheckingAccount extends Account{
         super.withdraw(MONTHLY_FEE);
         System.out.println("✓ Monthly fee charged: $" + String.format("%.2f", MONTHLY_FEE));
     }
+
+    @Override
+    public String getAccountDetails(){
+        String feeInfo = (getAccountHolder().getCustomerType() == CustomerType.PREMIUM) 
+            ? "Waived (Premium Customer)" 
+            : "$" + String.format("%.2f", MONTHLY_FEE);
+        return super.getAccountDetails() +
+               "\n  Overdraft Limit: $" + String.format("%,.2f", OVERDRAFT_LIMIT) +
+               "\n  Monthly Fee: " + feeInfo;
+    }
 }

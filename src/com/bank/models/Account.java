@@ -82,6 +82,17 @@ public abstract class Account implements AccountOperations {
                 accountType,
                 String.format("%,.2f", balance));
     }
+
+    public String getAccountDetails(){
+        return "  Account Number: " + accountNumber +
+               "\n  Account Type: " + accountType +
+               "\n  Account Holder: " + accountHolder.getName() +
+               "\n  Customer Type: " + accountHolder.getCustomerType() +
+               "\n  Customer ID: " + accountHolder.getCustomerId() +
+               "\n  Current Balance: $" + String.format("%,.2f", balance) +
+               "\n  Currency: " + currency +
+               "\n  Status: Active";
+    }
 }
 
 

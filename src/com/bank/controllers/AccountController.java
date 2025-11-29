@@ -113,7 +113,7 @@ public class AccountController {
             System.out.println("\n" + "=".repeat(80));
             System.out.println("ACCOUNT DETAILS");
             System.out.println("=".repeat(80));
-            System.out.println(account.getCreationMessage());
+            System.out.println(account.getAccountDetails());
             System.out.println("=".repeat(80));
         } else if (choice.equals("2")) {
             System.out.print("Enter your Manager ID: ");
