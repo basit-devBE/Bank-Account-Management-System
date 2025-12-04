@@ -3,6 +3,8 @@ package com.bank.models;
 import com.bank.interfaces.AccountOperations;
 import com.bank.models.enums.AccountType;
 
+//INSTEAD OF CREATING AN INTERFACE,MAKE THE DEPOSIT AND WITHDRAW METHODS ABSTRACT IN THE ACCOUNT CLASS
+
 
 public abstract class Account implements AccountOperations {
     private String accountNumber;
@@ -59,8 +61,8 @@ public abstract class Account implements AccountOperations {
             System.out.println("Insufficient balance or invalid amount.");
         }
     }
-
     @Override
+    //remove the @Override annotation it must really implement the method from the interface
     public double checkBalance(){
         return balance;
     }

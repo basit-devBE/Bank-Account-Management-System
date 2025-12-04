@@ -1,3 +1,5 @@
+package com.bank;
+
 import com.bank.controllers.MenuController;
 
 class Main{
