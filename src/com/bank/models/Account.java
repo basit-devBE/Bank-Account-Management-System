@@ -1,6 +1,9 @@
 package com.bank.models;
 
 import com.bank.models.enums.AccountType;
+import com.bank.models.exceptions.InsufficientfundsException;
+import com.bank.models.exceptions.InvalidAmountException;
+import com.bank.models.exceptions.OverdraftExceededException;
 
 public abstract class Account {
     private String accountNumber;
@@ -68,11 +71,10 @@ public abstract class Account {
                '}';
     }
 
-    // Abstract methods that must be implemented by subclasses
     public abstract void displayAccountDetails();
     public abstract String getAccountType();
-    public abstract void deposit(double amount);
-    public abstract void withdraw(double amount);
+    public abstract void deposit(double amount) throws InvalidAmountException;
+    public abstract void withdraw(double amount) throws InsufficientfundsException, InvalidAmountException, OverdraftExceededException;
 
     public String getCreationMessage(){
         return "\n✓ Account created successfully!" +

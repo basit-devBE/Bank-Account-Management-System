@@ -2,6 +2,9 @@ package com.bank.models;
 
 import com.bank.models.enums.AccountType;
 import com.bank.models.enums.CustomerType;
+import com.bank.models.exceptions.InsufficientfundsException;
+import com.bank.models.exceptions.InvalidAmountException;
+import com.bank.models.exceptions.OverdraftExceededException;
 
 public class SavingsAccount extends Account{
     private double interestRate;
@@ -47,43 +50,67 @@ public class SavingsAccount extends Account{
     }
 
     @Override
-    public void deposit(double amount) {
+    public void deposit(double amount) throws InvalidAmountException {
         if (amount > 0) {
             setBalance(getBalance() + amount);
         } else {
-            System.out.println("Deposit amount must be positive.");
+            throw new InvalidAmountException("Deposit amount must be positive.");
         }
     }
 
     @Override
-    public void withdraw(double amount) {
-        double currentBalance = getBalance();
+    public void withdraw(double amount) throws InsufficientfundsException, InvalidAmountException, OverdraftExceededException {
+        if (amount <= 0) {
+            throw new InvalidAmountException("Withdrawal amount must be positive.");
+        }
         
+        double currentBalance = getBalance();
+
+        String message = "Insufficient funds! Available balance: $" + String.format("%.2f", currentBalance) +
+                ", Requested: $" + String.format("%.2f", amount);
         if (getAccountHolder().getCustomerType() == CustomerType.PREMIUM) {
-            if (amount > 0 && amount <= currentBalance) {
-                setBalance(currentBalance - amount);
-            } else {
-                System.out.println("Insufficient balance or invalid amount.");
+            if (amount > currentBalance) {
+                throw new InsufficientfundsException(
+                        message
+                );
             }
+            setBalance(currentBalance - amount);
         } else {
-            if (amount > 0 && (currentBalance - amount) >= minimumBalance) {
-                setBalance(currentBalance - amount);
-            } else if (amount > 0 && (currentBalance - amount) < minimumBalance) {
-                System.out.println("✗ Cannot withdraw: Would fall below minimum balance of $" + String.format("%.2f", minimumBalance));
-            } else {
-                System.out.println("Invalid withdrawal amount.");
-            }
+            double balanceAfterWithdrawal = getBalanceAfterWithdrawal(amount, currentBalance,message);
+            setBalance(balanceAfterWithdrawal);
         }
     }
-    
+
+    private double getBalanceAfterWithdrawal(double amount, double currentBalance, String message) throws InsufficientfundsException {
+        double balanceAfterWithdrawal = currentBalance - amount;
+
+        if (balanceAfterWithdrawal < minimumBalance) {
+            if (amount > currentBalance) {
+                throw new InsufficientfundsException(
+                        message
+                );
+            } else {
+                throw new InsufficientfundsException(
+                    "Cannot withdraw: Would fall below minimum balance of $" + String.format("%.2f", minimumBalance) +
+                    ". Maximum withdrawal allowed: $" + String.format("%.2f", currentBalance - minimumBalance)
+                );
+            }
+        }
+        return balanceAfterWithdrawal;
+    }
+
     public double calculateInterest() {
         return getBalance() * (interestRate / 12);
     }
     
     public void applyMonthlyInterest() {
         double monthlyInterest = calculateInterest();
-        deposit(monthlyInterest);
-        System.out.println("✓ Monthly interest applied: $" + String.format("%.2f", monthlyInterest));
+        try {
+            deposit(monthlyInterest);
+            System.out.println("✓ Monthly interest applied: $" + String.format("%.2f", monthlyInterest));
+        } catch (InvalidAmountException e) {
+            System.err.println("Failed to apply monthly interest: " + e.getMessage());
+        }
     }
 
     @Override

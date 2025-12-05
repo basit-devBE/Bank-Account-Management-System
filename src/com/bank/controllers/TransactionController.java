@@ -2,6 +2,9 @@ package com.bank.controllers;
 import com.bank.models.Account;
 import com.bank.models.Transaction;
 import com.bank.models.enums.TransactionType;
+import com.bank.models.exceptions.InsufficientfundsException;
+import com.bank.models.exceptions.InvalidAmountException;
+import com.bank.models.exceptions.OverdraftExceededException;
 import com.bank.services.AccountManager;
 import com.bank.services.TransactionManager;
 
@@ -69,13 +72,20 @@ public class TransactionController {
             String confirm = scanner.nextLine().trim();
             
             if(confirm.equalsIgnoreCase("Y")){
-                account.deposit(amount);
-                double balanceAfter = account.getBalance();
-                Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, balanceAfter);
-                transaction.setStatus(Transaction.TransactionStatus.COMPLETED);
-                transactionManager.addTransaction(transaction);
-                System.out.println("✓ Transaction Completed Successfully");
-                System.out.println("  New Balance: $" + String.format("%.2f", balanceAfter));
+                try {
+                    account.deposit(amount);
+                    double balanceAfter = account.getBalance();
+                    Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, balanceAfter);
+                    transaction.setStatus(Transaction.TransactionStatus.COMPLETED);
+                    transactionManager.addTransaction(transaction);
+                    System.out.println("✓ Transaction Completed Successfully");
+                    System.out.println("  New Balance: $" + String.format("%.2f", balanceAfter));
+                } catch (InvalidAmountException e) {
+                    System.out.println("✗ Deposit failed: " + e.getMessage());
+                    Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, currentBalance);
+                    transaction.setStatus(Transaction.TransactionStatus.FAILED);
+                    transactionManager.addTransaction(transaction);
+                }
             } else {
                 Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, currentBalance);
                 transaction.setStatus(Transaction.TransactionStatus.FAILED);
@@ -86,7 +96,7 @@ public class TransactionController {
         }
         case 2:{
             double currentBalance = account.getBalance();
-            TransactionType transactionType = TransactionType.DEPOSIT;
+            TransactionType transactionType = TransactionType.WITHDRAW;
             if (amount > currentBalance) {
                 System.out.println("TRANSACTION CONFIRMATION");
                 System.out.println("─".repeat(50));
@@ -115,13 +125,30 @@ public class TransactionController {
             String confirm = scanner.nextLine().trim();
             
             if(confirm.equalsIgnoreCase("Y")){
-                account.withdraw(amount);
-                double balanceAfter = account.getBalance();
-                Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, balanceAfter);
-                transaction.setStatus(Transaction.TransactionStatus.COMPLETED);
-                transactionManager.addTransaction(transaction);
-                System.out.println("✓ Withdrawal Completed Successfully");
-                System.out.println("  New Balance: $" + String.format("%.2f", balanceAfter));
+                try {
+                    account.withdraw(amount);
+                    double balanceAfter = account.getBalance();
+                    Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, balanceAfter);
+                    transaction.setStatus(Transaction.TransactionStatus.COMPLETED);
+                    transactionManager.addTransaction(transaction);
+                    System.out.println("✓ Withdrawal Completed Successfully");
+                    System.out.println("  New Balance: $" + String.format("%.2f", balanceAfter));
+                } catch (InsufficientfundsException e) {
+                    System.out.println("✗ Withdrawal failed: " + e.getMessage());
+                    Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, currentBalance);
+                    transaction.setStatus(Transaction.TransactionStatus.FAILED);
+                    transactionManager.addTransaction(transaction);
+                } catch (InvalidAmountException ex) {
+                    System.out.println("✗ Withdrawal failed: " + ex.getMessage());
+                    Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, currentBalance);
+                    transaction.setStatus(Transaction.TransactionStatus.FAILED);
+                    transactionManager.addTransaction(transaction);
+                } catch (OverdraftExceededException ex) {
+                    System.out.println("✗ Withdrawal failed: " + ex.getMessage());
+                    Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, currentBalance);
+                    transaction.setStatus(Transaction.TransactionStatus.FAILED);
+                    transactionManager.addTransaction(transaction);
+                }
             } else {
                 Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, currentBalance);
                 transaction.setStatus(Transaction.TransactionStatus.FAILED);

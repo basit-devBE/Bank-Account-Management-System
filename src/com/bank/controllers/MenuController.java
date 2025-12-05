@@ -14,31 +14,28 @@ import com.bank.services.AccountManager;
 import com.bank.services.TransactionManager;
 
 public class MenuController {
-    Scanner scanner = new Scanner(System.in);
-    private AccountManager accountManager;
-    private TransactionManager transactionManager;
-    private AccountController accountController;
-    private TransactionController transactionController;
+    private final Scanner scanner;
+    private final AccountController accountController;
+    private final TransactionController transactionController;
    
 
-    public MenuController(){
-        this.accountManager = new AccountManager();
-        this.transactionManager = new TransactionManager();
-        this.accountController = new AccountController(accountManager, transactionManager);
-        this.transactionController = new TransactionController(accountManager, transactionManager);
-        
-        //seed initial accounts for demonstration
-        seedAccounts();
+    public MenuController(AccountController accountController, TransactionController transactionController){
+        this.scanner = new Scanner(System.in);
+        this.accountController = accountController;
+        this.transactionController = transactionController;
+    }
+    
+    public void initializeDemoData(AccountManager accountManager, TransactionManager transactionManager) {
+        seedAccounts(accountManager, transactionManager);
         
         System.out.println("\n" + "=".repeat(60));
-        System.out.println("  SYSTEM INITIALIZED");
+        System.out.println("  SYSTEM INITIALIZED - Demo Mode");
         System.out.println("=".repeat(60));
         System.out.println("  Seeded Accounts: 5 demo accounts created");
         System.out.println("=".repeat(60));
-
     }
     
-    private void seedAccounts() {
+    private void seedAccounts(AccountManager accountManager, TransactionManager transactionManager) {
         Customer customer1 = new RegularCustomer("John Smith", 28, "123 Main St, Boston", "+1-555-1001");
         String accNum1 = accountManager.generateAccountNumber();
         SavingsAccount acc1 = new SavingsAccount(accNum1, customer1, 5000.0);
@@ -116,37 +113,42 @@ public class MenuController {
 
     }
     public void start(){
-        boolean running = true;
-        while(running){
-            displayMenu();
-            String input = scanner.nextLine().trim();
-            switch(input){
-                case "1":
-                    accountController.createAccount();
-                    break;
-                case "2":
-                    accountController.viewAllAccounts();
-                    break;
-                case "3":
-                    transactionController.recordTransaction();
-                    break;
-                case "4":
-                    transactionController.viewTransactionHistory();
-                    break;
-                case "5":
-                    System.out.println("Exiting the system. Goodbye!");
-                    running = false;
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
+        try {
+            boolean running = true;
+            while(running){
+                displayMenu();
+                String input = scanner.nextLine().trim();
+                switch(input){
+                    case "1":
+                        accountController.createAccount();
+                        break;
+                    case "2":
+                        accountController.viewAllAccounts();
+                        break;
+                    case "3":
+                        transactionController.recordTransaction();
+                        break;
+                    case "4":
+                        transactionController.viewTransactionHistory();
+                        break;
+                    case "5":
+                        System.out.println("Thank you for using the Bank Account Management System! ");
+                        System.out.println("All data saved in memory.Remember to commit your latest changes to Git!");
+                        System.out.println("Goodbye!");
+                        running = false;
+                        break;
+                    default:
+                        System.out.println("Invalid option. Please try again.");
+                }
+                
+                if(running){
+                    System.out.print("\nPress Enter to continue...");
+                    scanner.nextLine();
+                }
             }
-            
-            if(running){
-                System.out.print("\nPress Enter to continue...");
-                scanner.nextLine();
-            }
+        } finally {
+            scanner.close();
         }
-
     }
 
 
