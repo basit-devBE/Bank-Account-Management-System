@@ -3,66 +3,83 @@ package com.bank.models;
 import com.bank.models.enums.CustomerType;
 import com.bank.models.enums.Role;
 
-public class Customer {
+public abstract class Customer {
     private String customerId;
     private String name;
     private int age;
     private String address;
     private String contact;
-    private CustomerType customerType;
     private Role role;
-    private double transactionLimit;
     private static int customerCount = 0;
 
-    public Customer(String name, int age, String address, String contact, Role role, CustomerType customerType) {
+    public Customer(String name, int age, String address, String contact, Role role) {
         this.customerId = (role == Role.MANAGER ? "MGR" : "CUST") + String.format("%05d", ++customerCount);
         this.name = name;
         this.age = age;
-        this.customerType = role == Role.MANAGER ? null : customerType;
         this.role = role;
         this.address = address;
         this.contact = contact;
-        this.transactionLimit = role == Role.MANAGER ? Double.MAX_VALUE : 
-                               (customerType == CustomerType.PREMIUM ? 50000.0 : 10000.0);
     }
-
-    
 
     public String getName() {
         return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
     }
     
     public String getCustomerId() {
         return customerId;
     }
     
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+    
     public int getAge() {
         return age;
+    }
+    
+    public void setAge(int age) {
+        this.age = age;
     }
     
     public String getAddress() {
         return address;
     }
     
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    
     public String getContact() {
         return contact;
     }
-
-    public CustomerType getCustomerType() {
-        return customerType;
+    
+    public void setContact(String contact) {
+        this.contact = contact;
     }
     
     public Role getRole() {
         return role;
     }
     
+    public void setRole(Role role) {
+        this.role = role;
+    }
+    
+    public static int getCustomerCount() {
+        return customerCount;
+    }
+    
     public boolean isManager() {
         return this.role == Role.MANAGER;
     }
     
-    public double getTransactionLimit() {
-        return transactionLimit;
-    }
+    // Abstract methods to be implemented by subclasses
+    public abstract CustomerType getCustomerType();
+    public abstract double getTransactionLimit();
     
     @Override
     public String toString() {
@@ -78,8 +95,8 @@ public class Customer {
                 "customerId='" + customerId + '\'' +
                 ", name='" + name + '\'' +
                 ", age=" + age +
-                ", customerType=" + customerType +
-                ", transactionLimit=$" + String.format("%,.2f", transactionLimit) +
+                ", customerType=" + getCustomerType() +
+                ", transactionLimit=$" + String.format("%,.2f", getTransactionLimit()) +
                 '}';
     }
 }

@@ -3,11 +3,12 @@ import java.util.Scanner;
 
 import com.bank.models.CheckingAccount;
 import com.bank.models.Customer;
+import com.bank.models.PremiumCustomer;
+import com.bank.models.RegularCustomer;
 import com.bank.models.SavingsAccount;
 import com.bank.models.Transaction;
 import com.bank.models.enums.AccountType;
 import com.bank.models.enums.CustomerType;
-import com.bank.models.enums.Role;
 import com.bank.models.enums.TransactionType;
 import com.bank.repository.AccountManager;
 import com.bank.repository.CustomerManager;
@@ -30,11 +31,9 @@ public class AccountController {
         System.out.println("\nACCOUNT CREATION");
         System.out.println("─".repeat(50));
         
-        // Step 1: Get customer name
         System.out.print("Enter customer name: ");
         String accountHolderName = scanner.nextLine().trim();
         
-        // Step 2: Get customer age
         System.out.print("Enter customer age: ");
         int age = Integer.parseInt(scanner.nextLine().trim());
         
@@ -83,11 +82,15 @@ public class AccountController {
             }
         }
         
-        // Generate account number
         String accountNumber = accountManager.generateAccountNumber();
         
-        // Create customer and account
-        Customer accountHolder = new Customer(accountHolderName, age, accountHolderaddress, contact, Role.CUSTOMER, customerType);
+        // Create customer based on type
+        Customer accountHolder;
+        if (customerType == CustomerType.PREMIUM) {
+            accountHolder = new PremiumCustomer(accountHolderName, age, accountHolderaddress, contact);
+        } else {
+            accountHolder = new RegularCustomer(accountHolderName, age, accountHolderaddress, contact);
+        }
         
         switch(accountType){
             case SAVINGS:{
@@ -95,7 +98,6 @@ public class AccountController {
                 accountManager.addAccount(newAccount);
                 customerManager.addCustomer(accountHolder);
                 
-                // Record initial deposit transaction
                 String transactionId = transactionManager.generateTransactionId();
                 Transaction initialDepositTxn = new Transaction(newAccount, initialDeposit, 
                     TransactionType.DEPOSIT, transactionId, LocalDate.now(), initialDeposit);
