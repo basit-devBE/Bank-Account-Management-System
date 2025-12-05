@@ -25,4 +25,13 @@ public class CustomerManager {
         customers = newCustomers;
     }
 
+    public Customer findCustomerById(String customerId) {
+        for (int i = 0; i < customerCount; i++) {
+            if (customers[i].getCustomerId().equals(customerId)) {
+                return customers[i];
+            }
+        }
+        return null;
+    }
+
 }

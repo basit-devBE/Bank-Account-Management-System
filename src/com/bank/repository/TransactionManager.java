@@ -11,6 +11,10 @@ public class TransactionManager {
         this.transactionCount = 0;
     }
 
+    public String generateTransactionId() {
+        return "TXN" + String.format("%03d", transactionCount + 1);
+    }
+
     public void addTransaction(Transaction transaction) {
         if (transactionCount >= transactions.length) {
             resizeArray();

@@ -12,6 +12,10 @@ public class AccountManager {
         this.accountCount = 0;
     }
     
+    public String generateAccountNumber() {
+        return "ACC" + String.format("%03d", accountCount + 1);
+    }
+    
     public void addAccount(Account account) {
         if (accountCount >= accounts.length) {
             resizeArray();
@@ -52,7 +56,7 @@ public class AccountManager {
     public double getTotalBalance() {
         double total = 0;
         for (int i = 0; i < accountCount; i++) {
-            total += accounts[i].checkBalance();
+            total += accounts[i].getBalance();
         }
         return total;
     }

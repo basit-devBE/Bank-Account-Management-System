@@ -1,66 +1,80 @@
 package com.bank.controllers;
 import java.util.Scanner;
-import java.util.UUID;
 
 import com.bank.models.CheckingAccount;
 import com.bank.models.Customer;
 import com.bank.models.SavingsAccount;
+import com.bank.models.Transaction;
 import com.bank.models.enums.AccountType;
 import com.bank.models.enums.CustomerType;
 import com.bank.models.enums.Role;
+import com.bank.models.enums.TransactionType;
 import com.bank.repository.AccountManager;
 import com.bank.repository.CustomerManager;
+import com.bank.repository.TransactionManager;
+
+import java.time.LocalDate;
 public class AccountController {
     private AccountManager accountManager;
     private CustomerManager customerManager;
+    private TransactionManager transactionManager;
     private Scanner scanner = new Scanner(System.in);
 
-    public AccountController(AccountManager accountManager, CustomerManager customerManager) {
+    public AccountController(AccountManager accountManager, CustomerManager customerManager, TransactionManager transactionManager) {
         this.accountManager = accountManager;
         this.customerManager = customerManager;
+        this.transactionManager = transactionManager;
     }
 
     public void createAccount(){
-        System.out.println("\n--- Create Account ---");
-        System.out.println("Account Type:");
-        System.out.println("1. Savings");
-        System.out.println("2. Checking");
-        System.out.print("Select type (1 or 2): ");
-        int accountTypeChoice = Integer.parseInt(scanner.nextLine().trim());
-        AccountType accountType = accountTypeChoice == 1 ? AccountType.SAVINGS : AccountType.CHECKING;
+        System.out.println("\nACCOUNT CREATION");
+        System.out.println("─".repeat(50));
         
-        String accountNumber;
-        String accountHolderName;
-        String accountHolderaddress;
-        String contact;
-    
-        int age;
-        double initialDeposit;
-        accountNumber = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
+        // Step 1: Get customer name
+        System.out.print("Enter customer name: ");
+        String accountHolderName = scanner.nextLine().trim();
         
-        System.out.print("Enter account holder name: ");
-        accountHolderName = scanner.nextLine().trim();
+        // Step 2: Get customer age
+        System.out.print("Enter customer age: ");
+        int age = Integer.parseInt(scanner.nextLine().trim());
         
-        System.out.print("Enter account holder address: ");
-        accountHolderaddress = scanner.nextLine().trim();
+        // Step 3: Get customer contact
+        System.out.print("Enter customer contact: ");
+        String contact = scanner.nextLine().trim();
         
-        System.out.print("Enter account holder age: ");
-        age = Integer.parseInt(scanner.nextLine().trim());
+        // Step 4: Get customer address
+        System.out.print("Enter customer address: ");
+        String accountHolderaddress = scanner.nextLine().trim();
         
-        System.out.print("Enter account holder contact number: ");
-        contact = scanner.nextLine().trim();
+        System.out.println();
         
-        System.out.println("Customer Type:");
-        System.out.println("1. Regular");
-        System.out.println("2. Premium");
-        System.out.print("Select type (1 or 2): ");
+        // Step 5: Customer Type
+        System.out.println("Customer type:");
+        System.out.println("1. Regular Customer (Standard banking services)");
+        System.out.println("2. Premium Customer (Enhanced benefits, min balance $10,000)");
+        System.out.println();
+        System.out.print("Select type (1-2): ");
         int customerTypeChoice = Integer.parseInt(scanner.nextLine().trim());
         CustomerType customerType = customerTypeChoice == 2 ? CustomerType.PREMIUM : CustomerType.REGULAR;
         
-
-        System.out.print("Enter initial deposit amount: ");
-        initialDeposit = Double.parseDouble(scanner.nextLine().trim());
+        System.out.println();
         
+        // Step 6: Account Type
+        System.out.println("Account type:");
+        System.out.println("1. Savings Account (Interest: 3.5%, Min Balance: $500)");
+        System.out.println("2. Checking Account (Overdraft: $1,000, Monthly Fee: $10)");
+        System.out.println();
+        System.out.print("Select type (1-2): ");
+        int accountTypeChoice = Integer.parseInt(scanner.nextLine().trim());
+        AccountType accountType = accountTypeChoice == 1 ? AccountType.SAVINGS : AccountType.CHECKING;
+        
+        System.out.println();
+        
+        // Step 7: Initial deposit
+        System.out.print("Enter initial deposit amount: $");
+        double initialDeposit = Double.parseDouble(scanner.nextLine().trim());
+        
+        // Validate premium customer minimum deposit
         if (customerType == CustomerType.PREMIUM) {
             double premiumMinDeposit = 10000.0;
             if (initialDeposit < premiumMinDeposit) {
@@ -69,6 +83,10 @@ public class AccountController {
             }
         }
         
+        // Generate account number
+        String accountNumber = accountManager.generateAccountNumber();
+        
+        // Create customer and account
         Customer accountHolder = new Customer(accountHolderName, age, accountHolderaddress, contact, Role.CUSTOMER, customerType);
         
         switch(accountType){
@@ -76,6 +94,14 @@ public class AccountController {
                 SavingsAccount newAccount = new SavingsAccount(accountNumber, accountHolder, initialDeposit);
                 accountManager.addAccount(newAccount);
                 customerManager.addCustomer(accountHolder);
+                
+                // Record initial deposit transaction
+                String transactionId = transactionManager.generateTransactionId();
+                Transaction initialDepositTxn = new Transaction(newAccount, initialDeposit, 
+                    TransactionType.DEPOSIT, transactionId, LocalDate.now(), initialDeposit);
+                initialDepositTxn.setStatus(Transaction.TransactionStatus.COMPLETED);
+                transactionManager.addTransaction(initialDepositTxn);
+                
                 System.out.println(newAccount.getCreationMessage()); 
                 break;
             }
@@ -84,6 +110,14 @@ public class AccountController {
                 CheckingAccount newAccount = new CheckingAccount(accountNumber, accountHolder, initialDeposit);
                 accountManager.addAccount(newAccount);
                 customerManager.addCustomer(accountHolder);
+                
+                // Record initial deposit transaction
+                String transactionId = transactionManager.generateTransactionId();
+                Transaction initialDepositTxn = new Transaction(newAccount, initialDeposit, 
+                    TransactionType.DEPOSIT, transactionId, LocalDate.now(), initialDeposit);
+                initialDepositTxn.setStatus(Transaction.TransactionStatus.COMPLETED);
+                transactionManager.addTransaction(initialDepositTxn);
+                
                 System.out.println(newAccount.getCreationMessage());
                 break;
             }

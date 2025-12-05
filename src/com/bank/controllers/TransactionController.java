@@ -1,20 +1,25 @@
 package com.bank.controllers;
 import com.bank.models.Account;
+import com.bank.models.Customer;
 import com.bank.models.Transaction;
 import com.bank.models.enums.TransactionType;
 import com.bank.repository.AccountManager;
+import com.bank.repository.CustomerManager;
 import com.bank.repository.TransactionManager;
 
 import java.time.LocalDate;
 import java.util.Scanner;
 
 public class TransactionController {
-    private TransactionManager transactionManager = new TransactionManager();
+    private TransactionManager transactionManager;
     private AccountManager accountManager;
+    private CustomerManager customerManager;
     private Scanner scanner = new Scanner(System.in);
 
-    public TransactionController(AccountManager accountManager) {
+    public TransactionController(AccountManager accountManager, CustomerManager customerManager, TransactionManager transactionManager) {
         this.accountManager = accountManager;
+        this.customerManager = customerManager;
+        this.transactionManager = transactionManager;
     }
 
     public void recordTransaction(){
@@ -44,12 +49,12 @@ public class TransactionController {
            return;
        }
        
-       String transactionId = "TXN" + System.currentTimeMillis();
+       String transactionId = transactionManager.generateTransactionId();
        LocalDate date = LocalDate.now();
        
        switch (typeInput){
         case 1:{
-            double currentBalance = account.checkBalance();
+            double currentBalance = account.getBalance();
             
             System.out.println("TRANSACTION CONFIRMATION");
             System.out.println("─".repeat(50));
@@ -69,7 +74,7 @@ public class TransactionController {
             
             if(confirm.equalsIgnoreCase("Y")){
                 account.deposit(amount);
-                double balanceAfter = account.checkBalance();
+                double balanceAfter = account.getBalance();
                 Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, balanceAfter);
                 transaction.setStatus(Transaction.TransactionStatus.COMPLETED);
                 transactionManager.addTransaction(transaction);
@@ -84,7 +89,7 @@ public class TransactionController {
             break;          
         }
         case 2:{
-            double currentBalance = account.checkBalance();
+            double currentBalance = account.getBalance();
             TransactionType transactionType = TransactionType.DEPOSIT;
             if (amount > currentBalance) {
                 System.out.println("TRANSACTION CONFIRMATION");
@@ -115,7 +120,7 @@ public class TransactionController {
             
             if(confirm.equalsIgnoreCase("Y")){
                 account.withdraw(amount);
-                double balanceAfter = account.checkBalance();
+                double balanceAfter = account.getBalance();
                 Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, balanceAfter);
                 transaction.setStatus(Transaction.TransactionStatus.COMPLETED);
                 transactionManager.addTransaction(transaction);
@@ -156,12 +161,15 @@ public class TransactionController {
             System.out.print("Enter your Manager ID: ");
             String managerId = scanner.nextLine().trim();
             
-            if (!managerId.startsWith("MGR")) {
-                System.out.println("✗ Access Denied: Only managers can view all transaction history.");
+            Customer manager = customerManager.findCustomerById(managerId);
+            if (manager == null || !manager.isManager()) {
+                System.out.println("✗ Access Denied: Invalid Manager ID.");
+                System.out.println("Only registered managers can view all transaction history.");
                 System.out.println("Please select 'Y' to view your own account transactions.");
                 return;
             }
             
+            System.out.println("✓ Manager verified: " + manager.getName());
             transactionManager.viewAllTransactions();
         }
     }
