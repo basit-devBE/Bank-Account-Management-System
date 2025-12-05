@@ -10,20 +10,17 @@ import com.bank.models.Transaction;
 import com.bank.models.enums.AccountType;
 import com.bank.models.enums.CustomerType;
 import com.bank.models.enums.TransactionType;
-import com.bank.repository.AccountManager;
-import com.bank.repository.CustomerManager;
-import com.bank.repository.TransactionManager;
+import com.bank.services.AccountManager;
+import com.bank.services.TransactionManager;
 
 import java.time.LocalDate;
 public class AccountController {
     private AccountManager accountManager;
-    private CustomerManager customerManager;
     private TransactionManager transactionManager;
     private Scanner scanner = new Scanner(System.in);
 
-    public AccountController(AccountManager accountManager, CustomerManager customerManager, TransactionManager transactionManager) {
+    public AccountController(AccountManager accountManager, TransactionManager transactionManager) {
         this.accountManager = accountManager;
-        this.customerManager = customerManager;
         this.transactionManager = transactionManager;
     }
 
@@ -96,7 +93,6 @@ public class AccountController {
             case SAVINGS:{
                 SavingsAccount newAccount = new SavingsAccount(accountNumber, accountHolder, initialDeposit);
                 accountManager.addAccount(newAccount);
-                customerManager.addCustomer(accountHolder);
                 
                 String transactionId = transactionManager.generateTransactionId();
                 Transaction initialDepositTxn = new Transaction(newAccount, initialDeposit, 
@@ -111,7 +107,6 @@ public class AccountController {
             case CHECKING:{
                 CheckingAccount newAccount = new CheckingAccount(accountNumber, accountHolder, initialDeposit);
                 accountManager.addAccount(newAccount);
-                customerManager.addCustomer(accountHolder);
                 
                 // Record initial deposit transaction
                 String transactionId = transactionManager.generateTransactionId();

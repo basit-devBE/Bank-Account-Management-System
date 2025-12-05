@@ -1,11 +1,9 @@
 package com.bank.controllers;
 import com.bank.models.Account;
-import com.bank.models.Customer;
 import com.bank.models.Transaction;
 import com.bank.models.enums.TransactionType;
-import com.bank.repository.AccountManager;
-import com.bank.repository.CustomerManager;
-import com.bank.repository.TransactionManager;
+import com.bank.services.AccountManager;
+import com.bank.services.TransactionManager;
 
 import java.time.LocalDate;
 import java.util.Scanner;
@@ -13,12 +11,10 @@ import java.util.Scanner;
 public class TransactionController {
     private TransactionManager transactionManager;
     private AccountManager accountManager;
-    private CustomerManager customerManager;
     private Scanner scanner = new Scanner(System.in);
 
-    public TransactionController(AccountManager accountManager, CustomerManager customerManager, TransactionManager transactionManager) {
+    public TransactionController(AccountManager accountManager, TransactionManager transactionManager) {
         this.accountManager = accountManager;
-        this.customerManager = customerManager;
         this.transactionManager = transactionManager;
     }
 
@@ -161,15 +157,15 @@ public class TransactionController {
             System.out.print("Enter your Manager ID: ");
             String managerId = scanner.nextLine().trim();
             
-            Customer manager = customerManager.findCustomerById(managerId);
-            if (manager == null || !manager.isManager()) {
+            // Simple validation - check if ID starts with MGR
+            if (!managerId.startsWith("MGR")) {
                 System.out.println("✗ Access Denied: Invalid Manager ID.");
                 System.out.println("Only registered managers can view all transaction history.");
                 System.out.println("Please select 'Y' to view your own account transactions.");
                 return;
             }
             
-            System.out.println("✓ Manager verified: " + manager.getName());
+            System.out.println("✓ Manager verified");
             transactionManager.viewAllTransactions();
         }
     }

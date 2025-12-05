@@ -1,4 +1,4 @@
-package com.bank.repository;
+package com.bank.services;
 
 import com.bank.models.Transaction;
 
@@ -57,21 +57,21 @@ public class TransactionManager {
 
     public void viewTransactionsByAccount(String accountNumber) {
         boolean found = false;
+        
         System.out.println("\nTRANSACTION HISTORY FOR ACCOUNT: " + accountNumber);
         System.out.println("─".repeat(100));
-        System.out.printf("%-15s | %-10s | %-10s | %-15s | %-15s | %-10s%n",
-                "TRANSACTION ID", "TYPE", "AMOUNT", "ACCOUNT NO", "DATE", "STATUS");
+        System.out.printf("%-15s | %-10s | %-10s | %-15s | %-10s%n",
+                "TRANSACTION ID", "TYPE", "AMOUNT", "DATE", "STATUS");
         System.out.println("─".repeat(100));
 
         for (int i = 0; i < transactionCount; i++) {
             Transaction t = transactions[i];
             if (t.getAccount().getAccountNumber().equals(accountNumber)) {
                 found = true;
-                System.out.printf("%-15s | %-10s | $%-9.2f | %-15s | %-15s | %-10s%n",
+                System.out.printf("%-15s | %-10s | $%-9.2f | %-15s | %-10s%n",
                         t.getTransactionId(),
                         t.getTransactionType(),
                         t.getAmount(),
-                        t.getAccount().getAccountNumber(),
                         t.getDate(),
                         t.status);
                 System.out.println("─".repeat(100));
@@ -82,6 +82,4 @@ public class TransactionManager {
             System.out.println("No transactions found for this account.");
         }
     }
-    
-
 }

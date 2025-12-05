@@ -1,7 +1,6 @@
-package com.bank.repository;
+package com.bank.services;
 
 import com.bank.models.Account;
-import com.bank.models.Transaction;
 
 public class AccountManager {
     private Account[] accounts;
@@ -61,28 +60,9 @@ public class AccountManager {
         return total;
     }
     
-    public int getAccountCount() {
-        return accountCount;
-    }
-    
     private void resizeArray() {
         Account[] newAccounts = new Account[accounts.length * 2];
         System.arraycopy(accounts, 0, newAccounts, 0, accounts.length);
         accounts = newAccounts;
-    }
-
-    public Account getAccountDetail(String accountNumber) {
-        for (int i = 0; i < accountCount; i++) {
-            if (accounts[i].getAccountNumber().equals(accountNumber)) {
-                return accounts[i];
-            }
-        }
-        return null; 
-    }
-
-    public void deposit(Transaction transaction) {
-        Account account = transaction.getAccount();
-        double amount = transaction.getAmount();
-        account.deposit(amount);
     }
 }

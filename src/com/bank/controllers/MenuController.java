@@ -5,20 +5,17 @@ import java.util.Scanner;
 
 import com.bank.models.CheckingAccount;
 import com.bank.models.Customer;
-import com.bank.models.ManagerCustomer;
 import com.bank.models.PremiumCustomer;
 import com.bank.models.RegularCustomer;
 import com.bank.models.SavingsAccount;
 import com.bank.models.Transaction;
 import com.bank.models.enums.TransactionType;
-import com.bank.repository.AccountManager;
-import com.bank.repository.CustomerManager;
-import com.bank.repository.TransactionManager;
+import com.bank.services.AccountManager;
+import com.bank.services.TransactionManager;
 
 public class MenuController {
     Scanner scanner = new Scanner(System.in);
     private AccountManager accountManager;
-    private CustomerManager customerManager;
     private TransactionManager transactionManager;
     private AccountController accountController;
     private TransactionController transactionController;
@@ -26,22 +23,16 @@ public class MenuController {
 
     public MenuController(){
         this.accountManager = new AccountManager();
-        this.customerManager = new CustomerManager();
         this.transactionManager = new TransactionManager();
-        this.accountController = new AccountController(accountManager, customerManager, transactionManager);
-        this.transactionController = new TransactionController(accountManager, customerManager, transactionManager);
+        this.accountController = new AccountController(accountManager, transactionManager);
+        this.transactionController = new TransactionController(accountManager, transactionManager);
         
-        Customer manager = new ManagerCustomer("Bank Manager", 35, "Bank HQ, Main Street", "000-000-0000");
-        customerManager.addCustomer(manager);
         //seed initial accounts for demonstration
         seedAccounts();
         
         System.out.println("\n" + "=".repeat(60));
-        System.out.println("  SYSTEM INITIALIZED - MANAGER ACCOUNT CREATED");
+        System.out.println("  SYSTEM INITIALIZED");
         System.out.println("=".repeat(60));
-        System.out.println("  Manager ID: " + manager.getCustomerId());
-        System.out.println("  Manager Name: " + manager.getName());
-        System.out.println("  Use this ID to access manager functions");
         System.out.println("  Seeded Accounts: 5 demo accounts created");
         System.out.println("=".repeat(60));
 
@@ -49,7 +40,6 @@ public class MenuController {
     
     private void seedAccounts() {
         Customer customer1 = new RegularCustomer("John Smith", 28, "123 Main St, Boston", "+1-555-1001");
-        customerManager.addCustomer(customer1);
         String accNum1 = accountManager.generateAccountNumber();
         SavingsAccount acc1 = new SavingsAccount(accNum1, customer1, 5000.0);
         accountManager.addAccount(acc1);
@@ -65,7 +55,6 @@ public class MenuController {
         transactionManager.addTransaction(t2);
         
         Customer customer2 = new PremiumCustomer("Sarah Johnson", 45, "456 Oak Ave, Chicago", "+1-555-2002");
-        customerManager.addCustomer(customer2);
         String accNum2 = accountManager.generateAccountNumber();
         SavingsAccount acc2 = new SavingsAccount(accNum2, customer2, 15000.0);
         accountManager.addAccount(acc2);
@@ -81,7 +70,6 @@ public class MenuController {
         transactionManager.addTransaction(t4);
         
         Customer customer3 = new RegularCustomer("Michael Chen", 32, "789 Pine Rd, Seattle", "+1-555-3003");
-        customerManager.addCustomer(customer3);
         String accNum3 = accountManager.generateAccountNumber();
         CheckingAccount acc3 = new CheckingAccount(accNum3, customer3, 3000.0);
         accountManager.addAccount(acc3);
@@ -97,7 +85,6 @@ public class MenuController {
         transactionManager.addTransaction(t6);
         
         Customer customer4 = new PremiumCustomer("Emily Davis", 38, "321 Elm St, Miami", "+1-555-4004");
-        customerManager.addCustomer(customer4);
         String accNum4 = accountManager.generateAccountNumber();
         CheckingAccount acc4 = new CheckingAccount(accNum4, customer4, 12000.0);
         accountManager.addAccount(acc4);
@@ -113,7 +100,6 @@ public class MenuController {
         transactionManager.addTransaction(t8);
         
         Customer customer5 = new RegularCustomer("David Wilson", 29, "654 Maple Dr, Denver", "+1-555-5005");
-        customerManager.addCustomer(customer5);
         String accNum5 = accountManager.generateAccountNumber();
         SavingsAccount acc5 = new SavingsAccount(accNum5, customer5, 2500.0);
         accountManager.addAccount(acc5);
