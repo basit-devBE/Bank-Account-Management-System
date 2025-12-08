@@ -29,7 +29,6 @@ class TransactionManagerTest {
         checkingAccount = new CheckingAccount("CHK001", customer, 2000.0);
     }
 
-    // ========== TRANSACTION ID GENERATION TESTS ==========
 
     @Test
     @DisplayName("Should generate transaction ID in correct format")
@@ -103,7 +102,6 @@ class TransactionManagerTest {
             transactionManager.addTransaction(txn);
         }
 
-        // Should not throw any exception
         assertTrue(true);
     }
 
@@ -135,7 +133,6 @@ class TransactionManagerTest {
         assertEquals(TransactionType.WITHDRAW, withdrawal.getTransactionType());
     }
 
-    // ========== TRANSACTION STATUS TESTS ==========
 
     @Test
     @DisplayName("Should create transaction with PENDING status by default")
@@ -184,7 +181,6 @@ class TransactionManagerTest {
         assertEquals(Transaction.TransactionStatus.FAILED, transaction.status);
     }
 
-    // ========== TRANSACTION PROPERTIES TESTS ==========
 
     @Test
     @DisplayName("Should store correct transaction amount")
@@ -285,7 +281,6 @@ class TransactionManagerTest {
         assertTrue(true);
     }
 
-    // ========== VIEW TRANSACTIONS TESTS ==========
 
     @Test
     @DisplayName("Should display message when no transactions exist")

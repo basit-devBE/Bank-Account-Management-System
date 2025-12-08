@@ -14,6 +14,7 @@ import models.enums.TransactionType;
 import services.AccountManager;
 import services.StatementGenerator;
 import services.TransactionManager;
+import utils.CustomTestRunner;
 
 public class MenuController {
     private final Scanner scanner;
@@ -22,7 +23,6 @@ public class MenuController {
     private final AccountManager accountManager;
     private final TransactionManager transactionManager;
     private final StatementGenerator statementGenerator;
-   
 
     public MenuController(AccountController accountController, TransactionController transactionController, 
                           AccountManager accountManager, TransactionManager transactionManager){
@@ -138,7 +138,7 @@ public class MenuController {
                         generateStatements();
                         break;
                     case "4":
-                        runTests();
+                        runAllTests();
                         break;
                     case "5":
                         System.out.println("Thank you for using the Bank Account Management System! ");
@@ -267,25 +267,8 @@ public class MenuController {
         statementGenerator.generateMiniStatement(account);
     }
 
-    private void runTests() {
-        System.out.println("\n" + "=".repeat(50));
-        System.out.println("  TEST EXECUTION");
-        System.out.println("=".repeat(50));
-        System.out.println();
-        System.out.println("This feature runs the JUnit test suite.");
-        System.out.println();
-        System.out.println("To run tests, please execute:");
-        System.out.println("  mvn test");
-        System.out.println();
-        System.out.println("Or from your IDE:");
-        System.out.println("  Right-click on 'src/test/java' → Run Tests");
-        System.out.println();
-        System.out.println("Current Test Coverage:");
-        System.out.println("  • AccountTest: 24 tests");
-        System.out.println("  • TransactionManagerTest: 19 tests");
-        System.out.println("  • ExceptionTest: 15 tests");
-        System.out.println("  • Total: 58 comprehensive test cases");
-        System.out.println("=".repeat(50));
+    private void runAllTests() {
+        CustomTestRunner.runAllTests();
     }
 
 

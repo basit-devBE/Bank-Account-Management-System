@@ -1,6 +1,7 @@
 package services;
 
 import models.Account;
+import models.exceptions.*;        // Should not throw any exception
 import models.exceptions.InsufficientfundsException;
 import models.exceptions.InvalidAmountException;
 import models.exceptions.OverdraftExceededException;
@@ -63,44 +64,44 @@ public class AccountManager {
         return total;
     }
     
-    /**
-     * Transfer funds from one account to another
-     * @param fromAccountNumber Source account number
-     * @param toAccountNumber Destination account number
-     * @param amount Amount to transfer
-     * @throws InvalidAmountException If amount is invalid
-     * @throws InsufficientfundsException If source account has insufficient funds
-     * @throws OverdraftExceededException If withdrawal would exceed overdraft limit
-     * @throws IllegalArgumentException If either account is not found or if attempting self-transfer
-     */
-    public void transfer(String fromAccountNumber, String toAccountNumber, double amount)
-            throws InvalidAmountException, InsufficientfundsException, OverdraftExceededException {
+    // /**
+    //  * Transfer funds from one account to another
+    //  * @param fromAccountNumber Source account number
+    //  * @param toAccountNumber Destination account number
+    //  * @param amount Amount to transfer
+    //  * @throws InvalidAmountException If amount is invalid
+    //  * @throws InsufficientfundsException If source account has insufficient funds
+    //  * @throws OverdraftExceededException If withdrawal would exceed overdraft limit
+    //  * @throws IllegalArgumentException If either account is not found or if attempting self-transfer
+    //  */
+    // public void transfer(String fromAccountNumber, String toAccountNumber, double amount)
+    //         throws InvalidAmountException, InsufficientfundsException, OverdraftExceededException, InsufficientfundsException {
 
-        // Validate amount
-        if (amount <= 0) {
-            throw new InvalidAmountException("Transfer amount must be positive.");
-        }
+    //     // Validate amount
+    //     if (amount <= 0) {
+    //         throw new InvalidAmountException("Transfer amount must be positive.");
+    //     }
 
-        // Validate accounts
-        if (fromAccountNumber.equals(toAccountNumber)) {
-            throw new IllegalArgumentException("Cannot transfer to the same account.");
-        }
+    //     // Validate accounts
+    //     if (fromAccountNumber.equals(toAccountNumber)) {
+    //         throw new IllegalArgumentException("Cannot transfer to the same account.");
+    //     }
 
-        Account fromAccount = findAccount(fromAccountNumber);
-        Account toAccount = findAccount(toAccountNumber);
+    //     Account fromAccount = findAccount(fromAccountNumber);
+    //     Account toAccount = findAccount(toAccountNumber);
 
-        if (fromAccount == null) {
-            throw new IllegalArgumentException("Source account not found: " + fromAccountNumber);
-        }
+    //     if (fromAccount == null) {
+    //         throw new IllegalArgumentException("Source account not found: " + fromAccountNumber);
+    //     }
 
-        if (toAccount == null) {
-            throw new IllegalArgumentException("Destination account not found: " + toAccountNumber);
-        }
+    //     if (toAccount == null) {
+    //         throw new IllegalArgumentException("Destination account not found: " + toAccountNumber);
+    //     }
 
-        // Perform transfer
-        fromAccount.withdraw(amount);
-        toAccount.deposit(amount);
-    }
+    //     // Perform transfer
+    //     fromAccount.withdraw(amount);
+    //     toAccount.deposit(amount);
+    // }
 
     private void resizeArray() {
         Account[] newAccounts = new Account[accounts.length * 2];
