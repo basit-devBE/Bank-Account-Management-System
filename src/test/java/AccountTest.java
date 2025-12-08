@@ -20,16 +20,15 @@ class AccountTest {
     void setUp() {
         regularCustomer = new RegularCustomer("John Doe", 30, "123 Main St", "555-1234");
         premiumCustomer = new PremiumCustomer("Jane Smith", 35, "456 Oak Ave", "555-5678");
-        savingsAccount = new SavingsAccount("SAV001", regularCustomer, 1000.0);
-        checkingAccount = new CheckingAccount("CHK001", premiumCustomer, 2000.0);
+        savingsAccount = new SavingsAccount("ACC001", regularCustomer, 1000.0);
+        checkingAccount = new CheckingAccount("ACC002", premiumCustomer, 2000.0);
     }
 
-    // ========== ACCOUNT CREATION TESTS ==========
 
     @Test
     @DisplayName("Should create savings account with correct initial values")
     void testCreateSavingsAccount() {
-        assertEquals("SAV001", savingsAccount.getAccountNumber());
+        assertEquals("ACC001", savingsAccount.getAccountNumber());
         assertEquals(1000.0, savingsAccount.getBalance(), 0.01);
         assertEquals("Active", savingsAccount.getStatus());
         assertEquals("Savings", savingsAccount.getAccountType());
@@ -39,7 +38,7 @@ class AccountTest {
     @Test
     @DisplayName("Should create checking account with correct initial values")
     void testCreateCheckingAccount() {
-        assertEquals("CHK001", checkingAccount.getAccountNumber());
+        assertEquals("ACC002", checkingAccount.getAccountNumber());
         assertEquals(2000.0, checkingAccount.getBalance(), 0.01);
         assertEquals("Active", checkingAccount.getStatus());
         assertEquals("Checking", checkingAccount.getAccountType());
@@ -50,17 +49,16 @@ class AccountTest {
     @DisplayName("Should increment account counter on creation")
     void testAccountCounter() {
         int initialCount = Account.getAccountCounter();
-        new SavingsAccount("SAV002", regularCustomer, 500.0);
+        new SavingsAccount("ACC005", regularCustomer, 500.0);
         assertEquals(initialCount + 1, Account.getAccountCounter());
     }
 
-    // ========== GETTERS AND SETTERS TESTS ==========
 
     @Test
     @DisplayName("Should get and set account number")
     void testAccountNumber() {
-        savingsAccount.setAccountNumber("SAV999");
-        assertEquals("SAV999", savingsAccount.getAccountNumber());
+        savingsAccount.setAccountNumber("ACC999");
+        assertEquals("ACC999", savingsAccount.getAccountNumber());
     }
 
     @Test
@@ -85,7 +83,6 @@ class AccountTest {
         assertEquals(premiumCustomer, savingsAccount.getAccountHolder()); // Test backward compatibility
     }
 
-    // ========== ACCOUNT TYPE SPECIFIC TESTS ==========
 
     @Test
     @DisplayName("Savings account should have interest rate and minimum balance")
@@ -115,7 +112,6 @@ class AccountTest {
         assertEquals(1500.0, checkingAccount.getOverdraftLimit(), 0.01);
     }
 
-    // ========== DEPOSIT TESTS ==========
 
     @Test
     @DisplayName("Should deposit valid amount in savings account")
@@ -147,7 +143,6 @@ class AccountTest {
         });
     }
 
-    // ========== WITHDRAWAL TESTS ==========
 
     @Test
     @DisplayName("Should withdraw valid amount from savings account")
@@ -179,13 +174,12 @@ class AccountTest {
         });
     }
 
-    // ========== STRING REPRESENTATION TESTS ==========
 
     @Test
     @DisplayName("Should generate correct toString representation")
     void testToString() {
         String result = savingsAccount.toString();
-        assertTrue(result.contains("SAV001"));
+        assertTrue(result.contains("ACC001"));
         assertTrue(result.contains("John Doe"));
         assertTrue(result.contains("1000.00"));
         assertTrue(result.contains("Active"));
@@ -196,7 +190,7 @@ class AccountTest {
     void testAccountSummary() {
         String summary = savingsAccount.getAccountSummary();
         assertNotNull(summary);
-        assertTrue(summary.contains("SAV001"));
+        assertTrue(summary.contains("ACC001"));
     }
 
     @Test
@@ -204,7 +198,7 @@ class AccountTest {
     void testAccountDetails() {
         String details = savingsAccount.getAccountDetails();
         assertNotNull(details);
-        assertTrue(details.contains("SAV001"));
+        assertTrue(details.contains("ACC001"));
         assertTrue(details.contains("John Doe"));
         assertTrue(details.contains("1,000.00"));
     }
@@ -214,7 +208,7 @@ class AccountTest {
     void testSavingsCreationMessage() {
         String message = savingsAccount.getCreationMessage();
         assertTrue(message.contains("Account created successfully"));
-        assertTrue(message.contains("SAV001"));
+        assertTrue(message.contains("ACC001"));
         assertTrue(message.contains("3.5%")); // Interest rate
         assertTrue(message.contains("500.00")); // Minimum balance
     }
@@ -224,7 +218,7 @@ class AccountTest {
     void testCheckingCreationMessage() {
         String message = checkingAccount.getCreationMessage();
         assertTrue(message.contains("Account created successfully"));
-        assertTrue(message.contains("CHK001"));
+        assertTrue(message.contains("ACC002"));
         assertTrue(message.contains("Overdraft Limit")); // Overdraft limit text
         assertTrue(message.contains("Monthly Fee")); // Monthly fee text
     }

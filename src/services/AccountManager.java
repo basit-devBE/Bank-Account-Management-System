@@ -1,6 +1,7 @@
 package services;
 
 import models.Account;
+import models.exceptions.*;        // Should not throw any exception
 import models.exceptions.InsufficientfundsException;
 import models.exceptions.InvalidAmountException;
 import models.exceptions.OverdraftExceededException;
@@ -74,7 +75,7 @@ public class AccountManager {
      * @throws IllegalArgumentException If either account is not found or if attempting self-transfer
      */
     public void transfer(String fromAccountNumber, String toAccountNumber, double amount)
-            throws InvalidAmountException, InsufficientfundsException, OverdraftExceededException {
+            throws InvalidAmountException, InsufficientfundsException, OverdraftExceededException, InsufficientfundsException {
 
         // Validate amount
         if (amount <= 0) {
