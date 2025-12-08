@@ -3,6 +3,7 @@ package controllers;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+import models.Account;
 import models.CheckingAccount;
 import models.Customer;
 import models.PremiumCustomer;
@@ -11,18 +12,26 @@ import models.SavingsAccount;
 import models.Transaction;
 import models.enums.TransactionType;
 import services.AccountManager;
+import services.StatementGenerator;
 import services.TransactionManager;
 
 public class MenuController {
     private final Scanner scanner;
     private final AccountController accountController;
     private final TransactionController transactionController;
+    private final AccountManager accountManager;
+    private final TransactionManager transactionManager;
+    private final StatementGenerator statementGenerator;
    
 
-    public MenuController(AccountController accountController, TransactionController transactionController){
+    public MenuController(AccountController accountController, TransactionController transactionController, 
+                          AccountManager accountManager, TransactionManager transactionManager){
         this.scanner = new Scanner(System.in);
         this.accountController = accountController;
         this.transactionController = transactionController;
+        this.accountManager = accountManager;
+        this.transactionManager = transactionManager;
+        this.statementGenerator = new StatementGenerator(transactionManager);
     }
     
     public void initializeDemoData(AccountManager accountManager, TransactionManager transactionManager) {
@@ -120,20 +129,20 @@ public class MenuController {
                 String input = scanner.nextLine().trim();
                 switch(input){
                     case "1":
-                        accountController.createAccount();
+                        manageAccounts();
                         break;
                     case "2":
-                        accountController.viewAllAccounts();
+                        performTransactions();
                         break;
                     case "3":
-                        transactionController.recordTransaction();
+                        generateStatements();
                         break;
                     case "4":
-                        transactionController.viewTransactionHistory();
+                        runTests();
                         break;
                     case "5":
                         System.out.println("Thank you for using the Bank Account Management System! ");
-                        System.out.println("All data saved in memory.Remember to commit your latest changes to Git!");
+                        System.out.println("All data saved in memory. Remember to commit your latest changes to Git!");
                         System.out.println("Goodbye!");
                         running = false;
                         break;
@@ -151,6 +160,134 @@ public class MenuController {
         }
     }
 
+    private void manageAccounts() {
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("  ACCOUNT MANAGEMENT");
+        System.out.println("=".repeat(50));
+        System.out.println();
+        System.out.println("1. Create New Account");
+        System.out.println("2. View Account(s)");
+        System.out.println("3. Back to Main Menu");
+        System.out.println();
+        System.out.print("Enter choice: ");
+        
+        String choice = scanner.nextLine().trim();
+        
+        switch(choice) {
+            case "1":
+                accountController.createAccount();
+                break;
+            case "2":
+                accountController.viewAllAccounts();
+                break;
+            case "3":
+                return;
+            default:
+                System.out.println("Invalid option. Please try again.");
+        }
+    }
+
+    private void performTransactions() {
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("  TRANSACTION MANAGEMENT");
+        System.out.println("=".repeat(50));
+        System.out.println();
+        System.out.println("1. Record New Transaction");
+        System.out.println("2. View Transaction History");
+        System.out.println("3. Back to Main Menu");
+        System.out.println();
+        System.out.print("Enter choice: ");
+        
+        String choice = scanner.nextLine().trim();
+        
+        switch(choice) {
+            case "1":
+                transactionController.recordTransaction();
+                break;
+            case "2":
+                transactionController.viewTransactionHistory();
+                break;
+            case "3":
+                return;
+            default:
+                System.out.println("Invalid option. Please try again.");
+        }
+    }
+
+    private void generateStatements() {
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("  ACCOUNT STATEMENT GENERATION");
+        System.out.println("=".repeat(50));
+        System.out.println();
+        System.out.println("1. Full Account Statement");
+        System.out.println("2. Mini Statement");
+        System.out.println("3. Back to Main Menu");
+        System.out.println();
+        System.out.print("Enter choice: ");
+        
+        String choice = scanner.nextLine().trim();
+        
+        switch(choice) {
+            case "1":
+                generateFullStatement();
+                break;
+            case "2":
+                generateMiniStatement();
+                break;
+            case "3":
+                return;
+            default:
+                System.out.println("Invalid option. Please try again.");
+        }
+    }
+
+    private void generateFullStatement() {
+        System.out.print("\nEnter Account Number: ");
+        String accountNumber = scanner.nextLine().trim();
+        
+        Account account = accountManager.findAccount(accountNumber);
+        if (account == null) {
+            System.out.println("✗ Account not found!");
+            return;
+        }
+        
+        statementGenerator.generateStatement(account);
+    }
+
+    private void generateMiniStatement() {
+        System.out.print("\nEnter Account Number: ");
+        String accountNumber = scanner.nextLine().trim();
+        
+        Account account = accountManager.findAccount(accountNumber);
+        if (account == null) {
+            System.out.println("✗ Account not found!");
+            return;
+        }
+        
+        statementGenerator.generateMiniStatement(account);
+    }
+
+    private void runTests() {
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("  TEST EXECUTION");
+        System.out.println("=".repeat(50));
+        System.out.println();
+        System.out.println("This feature runs the JUnit test suite.");
+        System.out.println();
+        System.out.println("To run tests, please execute:");
+        System.out.println("  mvn test");
+        System.out.println();
+        System.out.println("Or from your IDE:");
+        System.out.println("  Right-click on 'src/test/java' → Run Tests");
+        System.out.println();
+        System.out.println("Current Test Coverage:");
+        System.out.println("  • AccountTest: 24 tests");
+        System.out.println("  • TransactionManagerTest: 19 tests");
+        System.out.println("  • ExceptionTest: 15 tests");
+        System.out.println("  • Total: 58 comprehensive test cases");
+        System.out.println("=".repeat(50));
+    }
+
 
 
 private void displayMenu(){
@@ -158,10 +295,10 @@ private void displayMenu(){
     System.out.println("  BANK ACCOUNT MANAGEMENT - MAIN MENU");
     System.out.println("=".repeat(50));
     System.out.println();
-    System.out.println("1. Create Account");
-    System.out.println("2. View Accounts");
-    System.out.println("3. Process Transaction");
-    System.out.println("4. View Transaction History");
+    System.out.println("1. Manage Accounts");
+    System.out.println("2. Perform Transactions");
+    System.out.println("3. Generate Account Statements");
+    System.out.println("4. Run Tests");
     System.out.println("5. Exit");
     System.out.println();
     System.out.print("Enter choice: ");

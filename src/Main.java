@@ -11,7 +11,8 @@ public class Main{
         AccountController accountController = new AccountController(accountManager, transactionManager);
         TransactionController transactionController = new TransactionController(accountManager, transactionManager);
         
-        MenuController menu = new MenuController(accountController, transactionController);
+        MenuController menu = new MenuController(accountController, transactionController, 
+                                                  accountManager, transactionManager);
         menu.initializeDemoData(accountManager, transactionManager);
         menu.start();
     }

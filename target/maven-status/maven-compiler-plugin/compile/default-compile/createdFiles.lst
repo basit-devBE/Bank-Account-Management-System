@@ -1,5 +1,6 @@
 controllers/MenuController.class
 models/Transaction.class
+services/StatementGenerator$1.class
 models/exceptions/OverdraftExceededException.class
 controllers/AccountController.class
 Main.class
