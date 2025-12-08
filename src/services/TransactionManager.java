@@ -82,4 +82,25 @@ public class TransactionManager {
             System.out.println("No transactions found for this account.");
         }
     }
+
+    public Transaction[] getTransactionsByAccount(String accountNumber) {
+        // First count matching transactions
+        int count = 0;
+        for (int i = 0; i < transactionCount; i++) {
+            if (transactions[i].getAccount().getAccountNumber().equals(accountNumber)) {
+                count++;
+            }
+        }
+        
+        // Create array of exact size
+        Transaction[] accountTransactions = new Transaction[count];
+        int index = 0;
+        for (int i = 0; i < transactionCount; i++) {
+            if (transactions[i].getAccount().getAccountNumber().equals(accountNumber)) {
+                accountTransactions[index++] = transactions[i];
+            }
+        }
+        
+        return accountTransactions;
+    }
 }
