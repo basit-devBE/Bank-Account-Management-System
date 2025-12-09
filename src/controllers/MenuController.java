@@ -3,6 +3,8 @@ package controllers;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+import org.testng.TestRunner;
+
 import models.Account;
 import models.CheckingAccount;
 import models.Customer;
@@ -23,15 +25,16 @@ public class MenuController {
     private final AccountManager accountManager;
     private final TransactionManager transactionManager;
     private final StatementGenerator statementGenerator;
+    private final CustomTestRunner testRunner;
 
-    public MenuController(AccountController accountController, TransactionController transactionController, 
-                          AccountManager accountManager, TransactionManager transactionManager){
+    public MenuController(AccountController accountController, TransactionController transactionController,AccountManager accountManager, TransactionManager transactionManager, CustomTestRunner testRunner) {
         this.scanner = new Scanner(System.in);
         this.accountController = accountController;
         this.transactionController = transactionController;
         this.accountManager = accountManager;
         this.transactionManager = transactionManager;
         this.statementGenerator = new StatementGenerator(transactionManager);
+        this.testRunner = testRunner;
     }
     
     public void initializeDemoData(AccountManager accountManager, TransactionManager transactionManager) {
@@ -138,7 +141,7 @@ public class MenuController {
                         generateStatements();
                         break;
                     case "4":
-                        runAllTests();
+                        testRunner.runAllTests();
                         break;
                     case "5":
                         System.out.println("Thank you for using the Bank Account Management System! ");
@@ -265,10 +268,6 @@ public class MenuController {
         }
         
         statementGenerator.generateMiniStatement(account);
-    }
-
-    private void runAllTests() {
-        CustomTestRunner.runAllTests();
     }
 
 

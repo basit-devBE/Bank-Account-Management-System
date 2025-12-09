@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 
 public class CustomTestRunner {
 
-    public static void runAllTests(){
+    public void runAllTests(){
         System.out.println("\n" + "=".repeat(50));
         System.out.println("  RUNNING TEST SUITE");
         System.out.println("=".repeat(50));
