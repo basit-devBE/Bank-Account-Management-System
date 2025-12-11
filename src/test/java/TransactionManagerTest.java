@@ -19,12 +19,11 @@ class TransactionManagerTest {
     private TransactionManager transactionManager;
     private Account savingsAccount;
     private Account checkingAccount;
-    private Customer customer;
 
     @BeforeEach
     void setUp() {
         transactionManager = new TransactionManager();
-        customer = new RegularCustomer("John Doe", 30, "123 Main St", "555-1234");
+        Customer customer = new RegularCustomer("John Doe", 30, "123 Main St", "555-1234");
         savingsAccount = new SavingsAccount("SAV001", customer, 1000.0);
         checkingAccount = new CheckingAccount("CHK001", customer, 2000.0);
     }

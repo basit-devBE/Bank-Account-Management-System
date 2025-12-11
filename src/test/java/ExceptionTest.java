@@ -12,12 +12,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExceptionTest {
     private SavingsAccount savingsAccount;
     private CheckingAccount checkingAccount;
-    private Customer regularCustomer;
     private Customer premiumCustomer;
 
     @BeforeEach
     void setUp() {
-        regularCustomer = new RegularCustomer("John Doe", 30, "123 Main St", "555-1234");
+        Customer regularCustomer = new RegularCustomer("John Doe", 30, "123 Main St", "555-1234");
         premiumCustomer = new PremiumCustomer("Jane Smith", 35, "456 Oak Ave", "555-5678");
         savingsAccount = new SavingsAccount("SAV001", regularCustomer, 1000.0);
         checkingAccount = new CheckingAccount("CHK001", premiumCustomer, 500.0);
@@ -82,7 +81,7 @@ class ExceptionTest {
     // ========== INSUFFICIENT FUNDS EXCEPTION TESTS ==========
 
     @Test
-    @DisplayName("Should throw InsufficientfundsException when withdrawing more than balance in savings")
+    @DisplayName("Should throw Insufficient funds Exception when withdrawing more than balance in savings")
     void testInsufficientFundsSavings() {
         InsufficientfundsException exception = assertThrows(InsufficientfundsException.class, () -> {
             savingsAccount.withdraw(2000.0); // More than balance
@@ -91,7 +90,7 @@ class ExceptionTest {
     }
 
     @Test
-    @DisplayName("Should throw InsufficientfundsException when balance would go below minimum in savings")
+    @DisplayName("Should throw Insufficient fundsException when balance would go below minimum in savings")
     void testBelowMinimumBalanceSavings() {
         InsufficientfundsException exception = assertThrows(InsufficientfundsException.class, () -> {
             savingsAccount.withdraw(600.0); // Would leave 400, below 500 minimum
@@ -153,7 +152,7 @@ class ExceptionTest {
     }
 
     @Test
-    @DisplayName("InsufficientfundsException should contain descriptive message")
+    @DisplayName("Insufficient fundsException should contain descriptive message")
     void testInsufficientFundsExceptionMessage() {
         InsufficientfundsException exception = new InsufficientfundsException("Not enough funds");
         assertEquals("Not enough funds", exception.getMessage());
