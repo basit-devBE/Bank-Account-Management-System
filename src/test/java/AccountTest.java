@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.testng.AssertJUnit.assertEquals;
 
 @DisplayName("Account Tests")
 class AccountTest {
@@ -25,7 +26,7 @@ class AccountTest {
     }
 
 
-    @Test
+    @org.testng.annotations.Test
     @DisplayName("Should create savings account with correct initial values")
     void testCreateSavingsAccount() {
         assertEquals("ACC001", savingsAccount.getAccountNumber());
@@ -35,7 +36,7 @@ class AccountTest {
         assertEquals(regularCustomer, savingsAccount.getCustomer());
     }
 
-    @Test
+    @org.testng.annotations.Test
     @DisplayName("Should create checking account with correct initial values")
     void testCreateCheckingAccount() {
         assertEquals("ACC002", checkingAccount.getAccountNumber());

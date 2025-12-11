@@ -3,8 +3,6 @@ package controllers;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-import org.testng.TestRunner;
-
 import models.Account;
 import models.CheckingAccount;
 import models.Customer;
@@ -23,7 +21,6 @@ public class MenuController {
     private final AccountController accountController;
     private final TransactionController transactionController;
     private final AccountManager accountManager;
-    private final TransactionManager transactionManager;
     private final StatementGenerator statementGenerator;
     private final CustomTestRunner testRunner;
 
@@ -32,7 +29,6 @@ public class MenuController {
         this.accountController = accountController;
         this.transactionController = transactionController;
         this.accountManager = accountManager;
-        this.transactionManager = transactionManager;
         this.statementGenerator = new StatementGenerator(transactionManager);
         this.testRunner = testRunner;
     }
