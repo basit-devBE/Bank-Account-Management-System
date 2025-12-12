@@ -241,8 +241,7 @@ public class MenuController {
     }
 
     private void generateFullStatement() {
-        System.out.print("\nEnter Account Number: ");
-        String accountNumber = scanner.nextLine().trim();
+        String accountNumber = utils.ValidationUtils.getAccountNumberInput(scanner, "\nEnter Account Number: ");
         
         Account account = accountManager.findAccount(accountNumber);
         if (account == null) {
@@ -254,8 +253,7 @@ public class MenuController {
     }
 
     private void generateMiniStatement() {
-        System.out.print("\nEnter Account Number: ");
-        String accountNumber = scanner.nextLine().trim();
+        String accountNumber = utils.ValidationUtils.getAccountNumberInput(scanner, "\nEnter Account Number: ");
         
         Account account = accountManager.findAccount(accountNumber);
         if (account == null) {

@@ -27,6 +27,8 @@ public class StatementGenerator {
         // Transactions section
         System.out.println("Transactions:");
         System.out.println("─".repeat(50));
+        System.out.printf("%-8s | %-12s | %-15s | %-15s%n", "TXN ID", "TYPE", "AMOUNT", "BALANCE");
+        System.out.println("─".repeat(50));
         
         Transaction[] transactions = transactionManager.getTransactionsByAccount(account.getAccountNumber());
         
