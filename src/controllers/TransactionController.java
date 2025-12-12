@@ -23,8 +23,7 @@ public class TransactionController {
 
     public void recordTransaction(){
        System.out.println("\n--- Record Transaction ---");
-       System.out.print("Enter Account Number: ");
-       String accountNumber = scanner.nextLine().trim();
+       String accountNumber = utils.ValidationUtils.getAccountNumberInput(scanner, "Enter Account Number: ");
        
        Account account = accountManager.findAccount(accountNumber);
        if(account == null){
@@ -36,17 +35,10 @@ public class TransactionController {
        System.out.println("\nTransaction Type:");
        System.out.println("1. Deposit");
        System.out.println("2. Withdraw");
-       System.out.print("Select type (1 or 2): ");
-       int typeInput = Integer.parseInt(scanner.nextLine().trim());
+       System.out.println("3. Transfer");
+       int typeInput = utils.ValidationUtils.getIntInput(scanner, "Select type (1-3): ", 1, 3);
        
-       System.out.print("Enter amount: $");
-       double amount;
-       try {
-           amount = Double.parseDouble(scanner.nextLine().trim());
-       } catch (NumberFormatException e) {
-           System.out.println("✗ Invalid amount entered.");
-           return;
-       }
+       double amount = utils.ValidationUtils.getDoubleInput(scanner, "Enter amount: $", 0.01);
        
        String transactionId = transactionManager.generateTransactionId();
        LocalDate date = LocalDate.now();
@@ -67,11 +59,9 @@ public class TransactionController {
             System.out.println("─".repeat(50));
             TransactionType transactionType = TransactionType.DEPOSIT;
 
-
-            System.out.print("Confirm Transaction? (Y/N): ");
-            String confirm = scanner.nextLine().trim();
+            boolean confirm = utils.ValidationUtils.getConfirmation(scanner, "Confirm Transaction?");
             
-            if(confirm.equalsIgnoreCase("Y")){
+            if(confirm){
                 try {
                     account.deposit(amount);
                     double balanceAfter = account.getBalance();
@@ -97,18 +87,6 @@ public class TransactionController {
         case 2:{
             double currentBalance = account.getBalance();
             TransactionType transactionType = TransactionType.WITHDRAW;
-            if (amount > currentBalance) {
-                System.out.println("TRANSACTION CONFIRMATION");
-                System.out.println("─".repeat(50));
-                System.out.println("✗ Insufficient funds!");
-                System.out.println("  Available Balance: $" + String.format("%.2f", currentBalance));
-                System.out.println("  Requested Amount: $" + String.format("%.2f", amount));
-                System.out.println("─".repeat(50));
-                Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, currentBalance);
-                transaction.setStatus(Transaction.TransactionStatus.FAILED);
-                transactionManager.addTransaction(transaction);
-                return;
-            }
             
             System.out.println("TRANSACTION CONFIRMATION");
             System.out.println("─".repeat(50));
@@ -121,10 +99,9 @@ public class TransactionController {
             System.out.println("  Date: " + date);
             System.out.println("─".repeat(50));
 
-            System.out.print("Confirm Transaction? (Y/N): ");
-            String confirm = scanner.nextLine().trim();
+            boolean confirm = utils.ValidationUtils.getConfirmation(scanner, "Confirm Transaction?");
             
-            if(confirm.equalsIgnoreCase("Y")){
+            if(confirm){
                 try {
                     account.withdraw(amount);
                     double balanceAfter = account.getBalance();
@@ -133,18 +110,8 @@ public class TransactionController {
                     transactionManager.addTransaction(transaction);
                     System.out.println("✓ Withdrawal Completed Successfully");
                     System.out.println("  New Balance: $" + String.format("%.2f", balanceAfter));
-                } catch (InsufficientfundsException e) {
+                } catch (InsufficientfundsException | InvalidAmountException | OverdraftExceededException e) {
                     System.out.println("✗ Withdrawal failed: " + e.getMessage());
-                    Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, currentBalance);
-                    transaction.setStatus(Transaction.TransactionStatus.FAILED);
-                    transactionManager.addTransaction(transaction);
-                } catch (InvalidAmountException ex) {
-                    System.out.println("✗ Withdrawal failed: " + ex.getMessage());
-                    Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, currentBalance);
-                    transaction.setStatus(Transaction.TransactionStatus.FAILED);
-                    transactionManager.addTransaction(transaction);
-                } catch (OverdraftExceededException ex) {
-                    System.out.println("✗ Withdrawal failed: " + ex.getMessage());
                     Transaction transaction = new Transaction(account, amount, transactionType, transactionId, date, currentBalance);
                     transaction.setStatus(Transaction.TransactionStatus.FAILED);
                     transactionManager.addTransaction(transaction);
@@ -157,22 +124,86 @@ public class TransactionController {
             }
             break;
         }
+        case 3:{
+            // Transfer Money
+            String toAccountNumber = utils.ValidationUtils.getAccountNumberInput(scanner, "Enter recipient account number: ");
+            
+            Account toAccount = accountManager.findAccount(toAccountNumber);
+            if(toAccount == null){
+                System.out.println("✗ Recipient account not found!");
+                return;
+            }
+            
+            if(account.getAccountNumber().equals(toAccountNumber)){
+                System.out.println("✗ Cannot transfer to the same account!");
+                return;
+            }
+            
+            double fromCurrentBalance = account.getBalance();
+            
+            System.out.println("\nTRANSFER CONFIRMATION");
+            System.out.println("─".repeat(50));
+            System.out.println("  Transaction ID: " + transactionId);
+            System.out.println("  From Account: " + account.getAccountNumber() + " (" + account.getAccountHolder().getName() + ")");
+            System.out.println("  To Account: " + toAccount.getAccountNumber() + " (" + toAccount.getAccountHolder().getName() + ")");
+            System.out.println("  Transfer Amount: $" + String.format("%.2f", amount));
+            System.out.println("  Your Current Balance: $" + String.format("%.2f", fromCurrentBalance));
+            System.out.println("  Your New Balance: $" + String.format("%.2f", fromCurrentBalance - amount));
+            System.out.println("  Date: " + date);
+            System.out.println("─".repeat(50));
+            
+            boolean confirm = utils.ValidationUtils.getConfirmation(scanner, "Confirm Transfer?");
+            
+            if(confirm){
+                try {
+                    // Withdraw from sender
+                    account.withdraw(amount);
+                    double fromBalanceAfter = account.getBalance();
+                    
+                    // Deposit to recipient
+                    toAccount.deposit(amount);
+                    double toBalanceAfter = toAccount.getBalance();
+                    
+                    String withdrawTxnId = transactionManager.generateTransactionId();
+                    Transaction withdrawTxn = new Transaction(account, amount, TransactionType.TRANSFER, withdrawTxnId, date, fromBalanceAfter);
+                    withdrawTxn.setStatus(Transaction.TransactionStatus.COMPLETED);
+                    transactionManager.addTransaction(withdrawTxn);
+                    
+                    String depositTxnId = transactionManager.generateTransactionId();
+                    Transaction depositTxn = new Transaction(toAccount, amount, TransactionType.TRANSFER, depositTxnId, date, toBalanceAfter);
+                    depositTxn.setStatus(Transaction.TransactionStatus.COMPLETED);
+                    transactionManager.addTransaction(depositTxn);
+                    
+                    System.out.println("✓ Transfer Completed Successfully");
+                    System.out.println("  Amount Transferred: $" + String.format("%.2f", amount));
+                    System.out.println("  Your New Balance: $" + String.format("%.2f", fromBalanceAfter));
+                    
+                } catch (InsufficientfundsException | InvalidAmountException | OverdraftExceededException e) {
+                    System.out.println("✗ Transfer failed: " + e.getMessage());
+                    Transaction transaction = new Transaction(account, amount, TransactionType.TRANSFER, transactionId, date, fromCurrentBalance);
+                    transaction.setStatus(Transaction.TransactionStatus.FAILED);
+                    transactionManager.addTransaction(transaction);
+                }
+            } else {
+                Transaction transaction = new Transaction(account, amount, TransactionType.TRANSFER, transactionId, date, fromCurrentBalance);
+                transaction.setStatus(Transaction.TransactionStatus.FAILED);
+                transactionManager.addTransaction(transaction);
+                System.out.println("✗ Transfer cancelled.");
+            }
+            break;
+        }
         default:{
             System.out.println("✗ Unknown transaction type.");
         }
 
-       }
-
-    }
+       }    }
 
     public void viewTransactionHistory(){
         System.out.println("\n--- Transaction History ---");
-        System.out.print("View for Single Account? (Y/N): ");
-        String input = scanner.nextLine().trim();
+        boolean viewSingle = utils.ValidationUtils.getConfirmation(scanner, "View for Single Account?");
         
-        if(input.equalsIgnoreCase("Y")){
-            System.out.print("Enter Account Number: ");
-            String accountNumber = scanner.nextLine().trim();
+        if(viewSingle){
+            String accountNumber = utils.ValidationUtils.getAccountNumberInput(scanner, "Enter Account Number: ");
             Account account = accountManager.findAccount(accountNumber);
             if(account == null){
                 System.out.println("✗ Account not found!");
@@ -181,17 +212,7 @@ public class TransactionController {
             transactionManager.viewTransactionsByAccount(accountNumber);
         } else {
             // Only managers can view all transactions
-            System.out.print("Enter your Manager ID: ");
-            String managerId = scanner.nextLine().trim();
-            
-            // Simple validation - check if ID starts with MGR
-            if (!managerId.startsWith("MGR")) {
-                System.out.println("✗ Access Denied: Invalid Manager ID.");
-                System.out.println("Only registered managers can view all transaction history.");
-                System.out.println("Please select 'Y' to view your own account transactions.");
-                return;
-            }
-            
+            String managerId = utils.ValidationUtils.getManagerIdInput(scanner, "Enter your Manager ID: ");
             System.out.println("✓ Manager verified");
             transactionManager.viewAllTransactions();
         }
