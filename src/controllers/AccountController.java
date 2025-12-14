@@ -165,6 +165,7 @@ public class AccountController {
             System.out.println(account.getAccountDetails());
             System.out.println("=".repeat(80));
         } else {
+            @SuppressWarnings("unused")
             String userId = ValidationUtils.getManagerIdInput(scanner, "Enter your Manager ID: ");
             accountManager.viewAllAccounts();
         }

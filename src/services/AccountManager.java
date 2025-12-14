@@ -5,12 +5,14 @@ import models.exceptions.InsufficientfundsException;
 import models.exceptions.InvalidAmountException;
 import models.exceptions.OverdraftExceededException;
 
+import java.util.HashMap;
+
 public class AccountManager {
-    private Account[] accounts;
+    private HashMap<String, Account> accountsMap = new HashMap<>();
     private int accountCount;
     
     public AccountManager() {
-        this.accounts = new Account[50]; 
+        this.accountsMap = new HashMap<>();
         this.accountCount = 0;
     }
     
@@ -19,19 +21,12 @@ public class AccountManager {
     }
     
     public void addAccount(Account account) {
-        if (accountCount >= accounts.length) {
-            resizeArray();
-        }
-        accounts[accountCount++] = account;
+        accountsMap.put(account.getAccountNumber(), account);
+        accountCount++;
     }
     
     public Account findAccount(String accountNumber) {
-        for (int i = 0; i < accountCount; i++) {
-            if (accounts[i].getAccountNumber().equals(accountNumber)) {
-                return accounts[i];
-            }
-        }
-        return null; 
+        return accountsMap.get(accountNumber);
     }
     
    public void viewAllAccounts() {
@@ -46,8 +41,8 @@ public class AccountManager {
                 "ACC NO", "CUSTOMER NAME", "TYPE", "BALANCE", "STATUS");
         System.out.println("─".repeat(85));
         
-        for (int i = 0; i < accountCount; i++) {
-            System.out.println(accounts[i].getAccountSummary());
+        for (Account account : accountsMap.values()) {
+            System.out.println(account.getAccountSummary());
             System.out.println("─".repeat(85));
         }
         
@@ -57,8 +52,8 @@ public class AccountManager {
     
     public double getTotalBalance() {
         double total = 0;
-        for (int i = 0; i < accountCount; i++) {
-            total += accounts[i].getBalance();
+        for (Account account : accountsMap.values()) {
+            total += account.getBalance();
         }
         return total;
     }
@@ -100,11 +95,5 @@ public class AccountManager {
         // Perform transfer
         fromAccount.withdraw(amount);
         toAccount.deposit(amount);
-    }
-
-    private void resizeArray() {
-        Account[] newAccounts = new Account[accounts.length * 2];
-        System.arraycopy(accounts, 0, newAccounts, 0, accounts.length);
-        accounts = newAccounts;
     }
 }

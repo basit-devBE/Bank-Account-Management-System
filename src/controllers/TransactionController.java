@@ -9,6 +9,7 @@ import services.AccountManager;
 import services.TransactionManager;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 
 public class TransactionController {
@@ -209,13 +210,188 @@ public class TransactionController {
                 System.out.println("✗ Account not found!");
                 return;
             }
-            transactionManager.viewTransactionsByAccount(accountNumber);
+            viewAccountTransactionMenu(accountNumber);
         } else {
             // Only managers can view all transactions
+            @SuppressWarnings("unused")
             String managerId = utils.ValidationUtils.getManagerIdInput(scanner, "Enter your Manager ID: ");
             System.out.println("✓ Manager verified");
             transactionManager.viewAllTransactions();
         }
+    }
+
+    private void viewAccountTransactionMenu(String accountNumber) {
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("  TRANSACTION VIEW OPTIONS");
+        System.out.println("=".repeat(50));
+        System.out.println();
+        System.out.println("1. View All Transactions (Sorted by Date)");
+        System.out.println("2. View Transactions Sorted by Amount");
+        System.out.println("3. Filter by Transaction Type");
+        System.out.println("4. Filter by Amount Range");
+        System.out.println("5. View Transaction Analytics");
+        System.out.println("6. Back");
+        System.out.println();
+        System.out.print("Enter choice: ");
+        
+        int choice = utils.ValidationUtils.getIntInput(scanner, "", 1, 6);
+        
+        switch(choice) {
+            case 1:
+                transactionManager.viewTransactionsByAccount(accountNumber);
+                break;
+            case 2:
+                viewTransactionsSortedByAmount(accountNumber);
+                break;
+            case 3:
+                filterByTransactionType(accountNumber);
+                break;
+            case 4:
+                filterByAmountRange(accountNumber);
+                break;
+            case 5:
+                viewTransactionAnalytics(accountNumber);
+                break;
+            case 6:
+                return;
+        }
+    }
+
+    private void viewTransactionsSortedByAmount(String accountNumber) {
+        List<Transaction> transactions = transactionManager.getTransactionsByAccountSortedByAmount(accountNumber);
+        
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions found.");
+            return;
+        }
+        
+        System.out.println("\nTRANSACTIONS SORTED BY AMOUNT (Highest to Lowest)");
+        System.out.println("─".repeat(100));
+        System.out.printf("%-15s | %-10s | %-10s | %-15s | %-10s%n",
+                "TRANSACTION ID", "TYPE", "AMOUNT", "DATE", "STATUS");
+        System.out.println("─".repeat(100));
+        
+        transactions.forEach(t -> System.out.printf("%-15s | %-10s | $%-9.2f | %-15s | %-10s%n",
+                t.getTransactionId(),
+                t.getTransactionType(),
+                t.getAmount(),
+                t.getDate(),
+                t.status));
+        System.out.println("─".repeat(100));
+    }
+
+    private void filterByTransactionType(String accountNumber) {
+        System.out.println("\nSelect Transaction Type:");
+        System.out.println("1. DEPOSIT");
+        System.out.println("2. WITHDRAW");
+        System.out.println("3. TRANSFER");
+        
+        int typeChoice = utils.ValidationUtils.getIntInput(scanner, "Enter choice (1-3): ", 1, 3);
+        
+        TransactionType selectedType;
+        switch(typeChoice) {
+            case 1:
+                selectedType = TransactionType.DEPOSIT;
+                break;
+            case 2:
+                selectedType = TransactionType.WITHDRAW;
+                break;
+            case 3:
+                selectedType = TransactionType.TRANSFER;
+                break;
+            default:
+                return;
+        }
+        
+        List<Transaction> filtered = transactionManager.filterTransactionsByType(accountNumber, selectedType);
+        
+        if (filtered.isEmpty()) {
+            System.out.println("\nNo " + selectedType + " transactions found.");
+            return;
+        }
+        
+        System.out.println("\nFILTERED TRANSACTIONS - Type: " + selectedType);
+        System.out.println("─".repeat(100));
+        System.out.printf("%-15s | %-10s | %-10s | %-15s | %-10s%n",
+                "TRANSACTION ID", "TYPE", "AMOUNT", "DATE", "STATUS");
+        System.out.println("─".repeat(100));
+        
+        filtered.forEach(t -> System.out.printf("%-15s | %-10s | $%-9.2f | %-15s | %-10s%n",
+                t.getTransactionId(),
+                t.getTransactionType(),
+                t.getAmount(),
+                t.getDate(),
+                t.status));
+        System.out.println("─".repeat(100));
+        System.out.println("Total Transactions: " + filtered.size());
+    }
+
+    private void filterByAmountRange(String accountNumber) {
+        double minAmount = utils.ValidationUtils.getDoubleInput(scanner, "Enter minimum amount: $", 0.0);
+        double maxAmount = utils.ValidationUtils.getDoubleInput(scanner, "Enter maximum amount: $", minAmount);
+        
+        List<Transaction> filtered = transactionManager.filterTransactionsByAmountRange(accountNumber, minAmount, maxAmount);
+        
+        if (filtered.isEmpty()) {
+            System.out.println("\nNo transactions found in range $" + String.format("%.2f", minAmount) + " - $" + String.format("%.2f", maxAmount));
+            return;
+        }
+        
+        System.out.println("\nFILTERED TRANSACTIONS - Amount Range: $" + String.format("%.2f", minAmount) + " - $" + String.format("%.2f", maxAmount));
+        System.out.println("─".repeat(100));
+        System.out.printf("%-15s | %-10s | %-10s | %-15s | %-10s%n",
+                "TRANSACTION ID", "TYPE", "AMOUNT", "DATE", "STATUS");
+        System.out.println("─".repeat(100));
+        
+        filtered.forEach(t -> System.out.printf("%-15s | %-10s | $%-9.2f | %-15s | %-10s%n",
+                t.getTransactionId(),
+                t.getTransactionType(),
+                t.getAmount(),
+                t.getDate(),
+                t.status));
+        System.out.println("─".repeat(100));
+        System.out.println("Total Transactions: " + filtered.size());
+    }
+
+    private void viewTransactionAnalytics(String accountNumber) {
+        System.out.println("\n" + "=".repeat(60));
+        System.out.println("           TRANSACTION ANALYTICS");
+        System.out.println("=".repeat(60));
+        System.out.println();
+        
+        double totalDeposits = transactionManager.calculateTotalByType(accountNumber, TransactionType.DEPOSIT);
+        double totalWithdrawals = transactionManager.calculateTotalByType(accountNumber, TransactionType.WITHDRAW);
+        double totalTransfers = transactionManager.calculateTotalByType(accountNumber, TransactionType.TRANSFER);
+        
+        List<Transaction> allTransactions = transactionManager.getTransactionsByAccount(accountNumber);
+        long depositCount = allTransactions.stream()
+                .filter(t -> t.getTransactionType() == TransactionType.DEPOSIT)
+                .count();
+        long withdrawalCount = allTransactions.stream()
+                .filter(t -> t.getTransactionType() == TransactionType.WITHDRAW)
+                .count();
+        long transferCount = allTransactions.stream()
+                .filter(t -> t.getTransactionType() == TransactionType.TRANSFER)
+                .count();
+        
+        System.out.println("Account: " + accountNumber);
+        System.out.println();
+        System.out.println("DEPOSITS:");
+        System.out.println("  Count: " + depositCount);
+        System.out.println("  Total: $" + String.format("%.2f", totalDeposits));
+        System.out.println();
+        System.out.println("WITHDRAWALS:");
+        System.out.println("  Count: " + withdrawalCount);
+        System.out.println("  Total: $" + String.format("%.2f", totalWithdrawals));
+        System.out.println();
+        System.out.println("TRANSFERS:");
+        System.out.println("  Count: " + transferCount);
+        System.out.println("  Total: $" + String.format("%.2f", totalTransfers));
+        System.out.println();
+        System.out.println("─".repeat(60));
+        System.out.println("NET CHANGE: $" + String.format("%.2f", (totalDeposits - totalWithdrawals - totalTransfers)));
+        System.out.println("TOTAL TRANSACTIONS: " + allTransactions.size());
+        System.out.println("=".repeat(60));
     }
 
 }

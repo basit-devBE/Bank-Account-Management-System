@@ -2,6 +2,7 @@ package services;
 
 import models.Account;
 import models.Transaction;
+import java.util.List;
 
 public class StatementGenerator {
     private TransactionManager transactionManager;
@@ -30,9 +31,9 @@ public class StatementGenerator {
         System.out.printf("%-8s | %-12s | %-15s | %-15s%n", "TXN ID", "TYPE", "AMOUNT", "BALANCE");
         System.out.println("─".repeat(50));
         
-        Transaction[] transactions = transactionManager.getTransactionsByAccount(account.getAccountNumber());
+        List<Transaction> transactions = transactionManager.getTransactionsByAccount(account.getAccountNumber());
         
-        if (transactions == null || transactions.length == 0) {
+        if (transactions == null || transactions.isEmpty()) {
             System.out.println("No transactions found.");
             System.out.println();
         } else {
@@ -40,14 +41,17 @@ public class StatementGenerator {
             double totalChange = 0.0;
             
             // Calculate initial balance by reversing transactions
-            for (int i = transactions.length - 1; i >= 0; i--) {
-                Transaction t = transactions[i];
+            for (int i = transactions.size() - 1; i >= 0; i--) {
+                Transaction t = transactions.get(i);
                 if (t != null && t.status == Transaction.TransactionStatus.COMPLETED) {
                     switch (t.getTransactionType()) {
                         case DEPOSIT:
                             initialBalance -= t.getAmount();
                             break;
                         case WITHDRAW:
+                            initialBalance += t.getAmount();
+                            break;
+                        case TRANSFER:
                             initialBalance += t.getAmount();
                             break;
                     }
