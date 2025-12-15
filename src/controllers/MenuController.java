@@ -14,6 +14,7 @@ import models.enums.TransactionType;
 import services.AccountManager;
 import services.StatementGenerator;
 import services.TransactionManager;
+import utils.ConcurrentTransactions;
 import utils.CustomTestRunner;
 import utils.FileOperations;
 
@@ -144,9 +145,12 @@ public class MenuController {
                         saveLoadData();
                         break;
                     case "5":
-                        runAllTests();
+                        runConcurrentTransactions();
                         break;
                     case "6":
+                        runAllTests();
+                        break;
+                    case "7":
                         System.out.println("Thank you for using the Bank Account Management System! ");
                         System.out.println("All data saved in memory. Remember to commit your latest changes to Git!");
                         System.out.println("Goodbye!");
@@ -294,6 +298,10 @@ public class MenuController {
         }
     }
 
+    private void runConcurrentTransactions() {
+        ConcurrentTransactions.simulateConcurrentTransactions(accountManager, transactionManager);
+    }
+
     private void runAllTests() {
         CustomTestRunner.runAllTests();
     }
@@ -309,8 +317,9 @@ private void displayMenu(){
     System.out.println("2. Perform Transactions");
     System.out.println("3. Generate Account Statements");
     System.out.println("4. Save/Load Data");
-    System.out.println("5. Run Tests");
-    System.out.println("6. Exit");
+    System.out.println("5. Run Concurrent Transactions (Thread Safety Test)");
+    System.out.println("6. Run Tests");
+    System.out.println("7. Exit");
     System.out.println();
     System.out.print("Enter choice: ");
 }

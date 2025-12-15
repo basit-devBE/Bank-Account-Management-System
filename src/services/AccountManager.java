@@ -49,6 +49,17 @@ public class AccountManager {
         return null; 
     }
     
+    public int getAccountCount() {
+        return accountCount;
+    }
+    
+    public Account getAccountByIndex(int index) {
+        if (index >= 0 && index < accountCount) {
+            return accounts[index];
+        }
+        return null;
+    }
+    
    public void viewAllAccounts() {
         if (accountCount == 0) {
             System.out.println("No accounts found.");
