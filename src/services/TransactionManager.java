@@ -1,6 +1,7 @@
 package services;
 
 import models.Transaction;
+import utils.FileOperations;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ public class TransactionManager {
 //    private Transaction[] transactions;
     private HashMap<String, List<Transaction>> transactionsMap = new HashMap<>();
     private int transactionCount;
+    private FileOperations fileOps = new FileOperations();
 
     public TransactionManager() {
         this.transactionsMap = new HashMap<>(); 
@@ -21,11 +23,24 @@ public class TransactionManager {
     }
 
     public void addTransaction(Transaction transaction) {
+        addTransaction(transaction, true);
+    }
+    
+    /**
+     * Add transaction with optional file write
+     * @param transaction Transaction to add
+     * @param writeToFile Whether to write to file (false when loading from file)
+     */
+    public void addTransaction(Transaction transaction, boolean writeToFile) {
         String accountNumber = transaction.getAccount().getAccountNumber();
 
         List<Transaction> accountTransactions = transactionsMap.getOrDefault(accountNumber, new ArrayList<>());
         accountTransactions.add(transaction);
         transactionsMap.put(accountNumber, accountTransactions);
+        transactionCount++;
+        if (writeToFile) {
+            fileOps.writeTransactionToFile(transaction);
+        }
     }
 
 //    public void resizeArray() {
@@ -83,7 +98,12 @@ public class TransactionManager {
             }
             System.out.println("─".repeat(100));
         }
+
+
+    public List<Transaction> getTransactionsByAccount(String accountNumber) {
+        return transactionsMap.getOrDefault(accountNumber, new ArrayList<>());
     }
+}
 
     
 

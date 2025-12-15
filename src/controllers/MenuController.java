@@ -15,6 +15,7 @@ import services.AccountManager;
 import services.StatementGenerator;
 import services.TransactionManager;
 import utils.CustomTestRunner;
+import utils.FileOperations;
 
 public class MenuController {
     private final Scanner scanner;
@@ -23,6 +24,7 @@ public class MenuController {
     private final AccountManager accountManager;
     private final TransactionManager transactionManager;
     private final StatementGenerator statementGenerator;
+    private final FileOperations fileOperations;
 
     public MenuController(AccountController accountController, TransactionController transactionController, 
                           AccountManager accountManager, TransactionManager transactionManager){
@@ -32,6 +34,7 @@ public class MenuController {
         this.accountManager = accountManager;
         this.transactionManager = transactionManager;
         this.statementGenerator = new StatementGenerator(transactionManager);
+        this.fileOperations = new FileOperations();
     }
     
     public void initializeDemoData(AccountManager accountManager, TransactionManager transactionManager) {
@@ -138,9 +141,12 @@ public class MenuController {
                         generateStatements();
                         break;
                     case "4":
-                        runAllTests();
+                        saveLoadData();
                         break;
                     case "5":
+                        runAllTests();
+                        break;
+                    case "6":
                         System.out.println("Thank you for using the Bank Account Management System! ");
                         System.out.println("All data saved in memory. Remember to commit your latest changes to Git!");
                         System.out.println("Goodbye!");
@@ -265,6 +271,29 @@ public class MenuController {
         statementGenerator.generateMiniStatement(account);
     }
 
+    private void saveLoadData() {
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("  SAVE/LOAD DATA");
+        System.out.println("=".repeat(50));
+        System.out.println();
+        System.out.println("1. Load Data from Files");
+        System.out.println("2. Back to Main Menu");
+        System.out.println();
+        System.out.print("Enter choice: ");
+        
+        String choice = scanner.nextLine().trim();
+        
+        switch(choice) {
+            case "1":
+                fileOperations.loadAllData(accountManager, transactionManager);
+                break;
+            case "2":
+                return;
+            default:
+                System.out.println("Invalid option. Please try again.");
+        }
+    }
+
     private void runAllTests() {
         CustomTestRunner.runAllTests();
     }
@@ -279,8 +308,9 @@ private void displayMenu(){
     System.out.println("1. Manage Accounts");
     System.out.println("2. Perform Transactions");
     System.out.println("3. Generate Account Statements");
-    System.out.println("4. Run Tests");
-    System.out.println("5. Exit");
+    System.out.println("4. Save/Load Data");
+    System.out.println("5. Run Tests");
+    System.out.println("6. Exit");
     System.out.println();
     System.out.print("Enter choice: ");
 }

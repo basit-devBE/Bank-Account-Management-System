@@ -4,14 +4,17 @@ import models.Account;
 import models.exceptions.InsufficientfundsException;
 import models.exceptions.InvalidAmountException;
 import models.exceptions.OverdraftExceededException;
+import utils.FileOperations;
 
 public class AccountManager {
     private Account[] accounts;
     private int accountCount;
+    private FileOperations fileOps = new FileOperations();
     
     public AccountManager() {
         this.accounts = new Account[50]; 
         this.accountCount = 0;
+
     }
     
     public String generateAccountNumber() {
@@ -19,10 +22,22 @@ public class AccountManager {
     }
     
     public void addAccount(Account account) {
+        addAccount(account, true);
+    }
+    
+    /**
+     * Add account with optional file write
+     * @param account Account to add
+     * @param writeToFile Whether to write to file (false when loading from file)
+     */
+    public void addAccount(Account account, boolean writeToFile) {
         if (accountCount >= accounts.length) {
             resizeArray();
         }
         accounts[accountCount++] = account;
+        if (writeToFile) {
+            fileOps.writeAccountToFile(account);
+        }
     }
     
     public Account findAccount(String accountNumber) {
