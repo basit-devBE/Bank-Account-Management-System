@@ -2,7 +2,6 @@ package services;
 
 import models.Account;
 import models.Transaction;
-import java.util.List;
 
 public class StatementGenerator {
     private TransactionManager transactionManager;

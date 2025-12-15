@@ -213,7 +213,6 @@ public class TransactionController {
             viewAccountTransactionMenu(accountNumber);
         } else {
             // Only managers can view all transactions
-            @SuppressWarnings("unused")
             String managerId = utils.ValidationUtils.getManagerIdInput(scanner, "Enter your Manager ID: ");
             System.out.println("✓ Manager verified");
             transactionManager.viewAllTransactions();

@@ -61,74 +61,6 @@ public class AccountManager {
                 .sum();
     }
     
-    public List<Account> getAllAccounts() {
-        return accountsMap.values().stream()
-                .sorted(Comparator.comparing(Account::getAccountNumber))
-                .collect(Collectors.toList());
-    }
-
-    public List<Account> getAccountsSortedByBalance() {
-        return accountsMap.values().stream()
-                .sorted(Comparator.comparing(Account::getBalance).reversed())
-                .collect(Collectors.toList());
-    }
-
-    public List<Account> getAccountsSortedByCustomerName() {
-        return accountsMap.values().stream()
-                .sorted(Comparator.comparing(account -> account.getCustomer().getName()))
-                .collect(Collectors.toList());
-    }
-
-    public List<Account> filterAccountsByType(String accountType) {
-        return accountsMap.values().stream()
-                .filter(account -> account.getAccountType().equalsIgnoreCase(accountType))
-                .sorted(Comparator.comparing(Account::getAccountNumber))
-                .collect(Collectors.toList());
-    }
-
-    public List<Account> filterAccountsByBalanceRange(double minBalance, double maxBalance) {
-        return accountsMap.values().stream()
-                .filter(account -> account.getBalance() >= minBalance && account.getBalance() <= maxBalance)
-                .sorted(Comparator.comparing(Account::getBalance).reversed())
-                .collect(Collectors.toList());
-    }
-
-    public List<Account> filterAccountsByCustomerType(String customerType) {
-        return accountsMap.values().stream()
-                .filter(account -> account.getCustomer().getCustomerType().toString().equalsIgnoreCase(customerType))
-                .sorted(Comparator.comparing(Account::getAccountNumber))
-                .collect(Collectors.toList());
-    }
-
-    public double getAverageBalance() {
-        return accountsMap.values().stream()
-                .mapToDouble(Account::getBalance)
-                .average()
-                .orElse(0.0);
-    }
-
-    public Account getAccountWithHighestBalance() {
-        return accountsMap.values().stream()
-                .max(Comparator.comparing(Account::getBalance))
-                .orElse(null);
-    }
-
-    public Account getAccountWithLowestBalance() {
-        return accountsMap.values().stream()
-                .min(Comparator.comparing(Account::getBalance))
-                .orElse(null);
-    }
-
-    public long countAccountsByType(String accountType) {
-        return accountsMap.values().stream()
-                .filter(account -> account.getAccountType().equalsIgnoreCase(accountType))
-                .count();
-    }
-
-    public int getAccountCount() {
-        return accountCount;
-    }
-
     /**
      * Transfer funds from one account to another
      * @param fromAccountNumber Source account number
@@ -166,5 +98,11 @@ public class AccountManager {
         // Perform transfer
         fromAccount.withdraw(amount);
         toAccount.deposit(amount);
+    }
+
+    private void resizeArray() {
+        Account[] newAccounts = new Account[accounts.length * 2];
+        System.arraycopy(accounts, 0, newAccounts, 0, accounts.length);
+        accounts = newAccounts;
     }
 }

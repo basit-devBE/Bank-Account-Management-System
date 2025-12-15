@@ -167,83 +167,8 @@ public class AccountController {
             System.out.println(account.getAccountDetails());
             System.out.println("=".repeat(80));
         } else {
-            @SuppressWarnings("unused")
             String userId = ValidationUtils.getManagerIdInput(scanner, "Enter your Manager ID: ");
-            viewManagerAccountMenu();
-        }
-    }
-
-    private void viewManagerAccountMenu() {
-        System.out.println("\n" + "=".repeat(50));
-        System.out.println("  ACCOUNT VIEW OPTIONS");
-        System.out.println("=".repeat(50));
-        System.out.println();
-        System.out.println("1. View All Accounts (Sorted by Account Number)");
-        System.out.println("2. View Accounts Sorted by Balance");
-        System.out.println("3. View Accounts Sorted by Customer Name");
-        System.out.println("4. Filter by Account Type");
-        System.out.println("5. Filter by Balance Range");
-        System.out.println("6. Filter by Customer Type");
-        System.out.println("7. View Account Analytics");
-        System.out.println("8. Back");
-        System.out.println();
-        System.out.print("Enter choice: ");
-        
-        int choice = ValidationUtils.getIntInput(scanner, "", 1, 8);
-        
-        switch(choice) {
-            case 1:
-                accountManager.viewAllAccounts();
-                break;
-            case 2:
-                viewAccountsSortedByBalance();
-                break;
-            case 3:
-                viewAccountsSortedByCustomerName();
-                break;
-            case 4:
-                filterByAccountType();
-                break;
-            case 5:
-                filterByBalanceRange();
-                break;
-            case 6:
-                filterByCustomerType();
-                break;
-            case 7:
-                viewAccountAnalytics();
-                break;
-            case 8:
-                return;
-        }
-    }
-
-    private void viewAccountsSortedByBalance() {
-        List<Account> accounts = accountManager.getAccountsSortedByBalance();
-        
-        if (accounts.isEmpty()) {
-            System.out.println("No accounts found.");
-            return;
-        }
-        
-        System.out.println("\nACCOUNTS SORTED BY BALANCE (Highest to Lowest)");
-        System.out.println("─".repeat(85));
-        System.out.printf("%-10s | %-20s | %-10s | %-15s | %-10s%n",
-                "ACC NO", "CUSTOMER NAME", "TYPE", "BALANCE", "STATUS");
-        System.out.println("─".repeat(85));
-        
-        accounts.forEach(account -> {
-            System.out.println(account.getAccountSummary());
-            System.out.println("─".repeat(85));
-        });
-    }
-
-    private void viewAccountsSortedByCustomerName() {
-        List<Account> accounts = accountManager.getAccountsSortedByCustomerName();
-        
-        if (accounts.isEmpty()) {
-            System.out.println("No accounts found.");
-            return;
+            accountManager.viewAllAccounts();
         }
         
         System.out.println("\nACCOUNTS SORTED BY CUSTOMER NAME");
