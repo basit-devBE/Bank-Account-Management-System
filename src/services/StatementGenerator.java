@@ -2,6 +2,7 @@ package services;
 
 import models.Account;
 import models.Transaction;
+import java.util.List;
 
 public class StatementGenerator {
     private TransactionManager transactionManager;
@@ -51,7 +52,8 @@ public class StatementGenerator {
                             initialBalance += t.getAmount();
                             break;
                         case TRANSFER:
-                            initialBalance += t.getAmount();
+                            // Handle transfer - amount depends on whether it's incoming or outgoing
+                            // This requires additional logic based on account number
                             break;
                     }
                 }

@@ -4,19 +4,17 @@ import models.Account;
 import models.exceptions.InsufficientfundsException;
 import models.exceptions.InvalidAmountException;
 import models.exceptions.OverdraftExceededException;
-
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
+import utils.FileOperations;
 
 public class AccountManager {
-    private HashMap<String, Account> accountsMap = new HashMap<>();
+    private Account[] accounts;
     private int accountCount;
+    private FileOperations fileOps = new FileOperations();
     
     public AccountManager() {
-        this.accountsMap = new HashMap<>();
+        this.accounts = new Account[50]; 
         this.accountCount = 0;
+
     }
     
     public String generateAccountNumber() {
@@ -24,12 +22,31 @@ public class AccountManager {
     }
     
     public void addAccount(Account account) {
-        accountsMap.put(account.getAccountNumber(), account);
-        accountCount++;
+        addAccount(account, true);
+    }
+    
+    /**
+     * Add account with optional file write
+     * @param account Account to add
+     * @param writeToFile Whether to write to file (false when loading from file)
+     */
+    public void addAccount(Account account, boolean writeToFile) {
+        if (accountCount >= accounts.length) {
+            resizeArray();
+        }
+        accounts[accountCount++] = account;
+        if (writeToFile) {
+            fileOps.writeAccountToFile(account);
+        }
     }
     
     public Account findAccount(String accountNumber) {
-        return accountsMap.get(accountNumber);
+        for (int i = 0; i < accountCount; i++) {
+            if (accounts[i].getAccountNumber().equals(accountNumber)) {
+                return accounts[i];
+            }
+        }
+        return null; 
     }
     
    public void viewAllAccounts() {
@@ -44,21 +61,21 @@ public class AccountManager {
                 "ACC NO", "CUSTOMER NAME", "TYPE", "BALANCE", "STATUS");
         System.out.println("─".repeat(85));
         
-        accountsMap.values().stream()
-                .sorted(Comparator.comparing(Account::getAccountNumber))
-                .forEach(account -> {
-                    System.out.println(account.getAccountSummary());
-                    System.out.println("─".repeat(85));
-                });
+        for (int i = 0; i < accountCount; i++) {
+            System.out.println(accounts[i].getAccountSummary());
+            System.out.println("─".repeat(85));
+        }
         
         System.out.println("\nTotal Accounts: " + accountCount);
         System.out.println("Total Bank Balance: $" + String.format("%,.2f", getTotalBalance()));
     }
     
     public double getTotalBalance() {
-        return accountsMap.values().stream()
-                .mapToDouble(Account::getBalance)
-                .sum();
+        double total = 0;
+        for (int i = 0; i < accountCount; i++) {
+            total += accounts[i].getBalance();
+        }
+        return total;
     }
     
     /**

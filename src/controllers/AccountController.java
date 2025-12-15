@@ -115,7 +115,6 @@ public class AccountController {
             case SAVINGS:{
                 SavingsAccount newAccount = new SavingsAccount(accountNumber, accountHolder, initialDeposit);
                 accountManager.addAccount(newAccount);
-                
                 String transactionId = transactionManager.generateTransactionId();
                 Transaction initialDepositTxn = new Transaction(newAccount, initialDeposit, 
                     TransactionType.DEPOSIT, transactionId, LocalDate.now(), initialDeposit);
@@ -129,14 +128,15 @@ public class AccountController {
             case CHECKING:{
                 CheckingAccount newAccount = new CheckingAccount(accountNumber, accountHolder, initialDeposit);
                 accountManager.addAccount(newAccount);
-                
-                // Record initial deposit transaction
+
+
                 String transactionId = transactionManager.generateTransactionId();
                 Transaction initialDepositTxn = new Transaction(newAccount, initialDeposit, 
                     TransactionType.DEPOSIT, transactionId, LocalDate.now(), initialDeposit);
                 initialDepositTxn.setStatus(Transaction.TransactionStatus.COMPLETED);
                 transactionManager.addTransaction(initialDepositTxn);
-                
+
+
                 System.out.println(newAccount.getCreationMessage());
                 break;
             }
@@ -167,7 +167,7 @@ public class AccountController {
             System.out.println(account.getAccountDetails());
             System.out.println("=".repeat(80));
         } else {
-            String userId = ValidationUtils.getManagerIdInput(scanner, "Enter your Manager ID: ");
+            ValidationUtils.getManagerIdInput(scanner, "Enter your Manager ID: ");
             accountManager.viewAllAccounts();
         }
         
