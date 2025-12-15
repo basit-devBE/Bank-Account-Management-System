@@ -4,7 +4,9 @@ import models.Account;
 import models.exceptions.InsufficientfundsException;
 import models.exceptions.InvalidAmountException;
 import models.exceptions.OverdraftExceededException;
+import utils.FileOperations;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 public class AccountManager {
     private HashMap<String, Account> accountsMap = new HashMap<>();
     private int accountCount;
+    private FileOperations fileOps = new FileOperations();
     
     public AccountManager() {
         this.accountsMap = new HashMap<>();
@@ -24,12 +27,36 @@ public class AccountManager {
     }
     
     public void addAccount(Account account) {
+        addAccount(account, true);
+    }
+    
+    /**
+     * Add account with optional file write
+     * @param account Account to add
+     * @param writeToFile Whether to write to file (false when loading from file)
+     */
+    public void addAccount(Account account, boolean writeToFile) {
         accountsMap.put(account.getAccountNumber(), account);
         accountCount++;
+        if (writeToFile) {
+            fileOps.writeAccountToFile(account);
+        }
     }
     
     public Account findAccount(String accountNumber) {
         return accountsMap.get(accountNumber);
+    }
+    
+    public int getAccountCount() {
+        return accountCount;
+    }
+    
+    public Account getAccountByIndex(int index) {
+        List<Account> accountsList = new ArrayList<>(accountsMap.values());
+        if (index >= 0 && index < accountsList.size()) {
+            return accountsList.get(index);
+        }
+        return null;
     }
     
    public void viewAllAccounts() {
@@ -100,9 +127,53 @@ public class AccountManager {
         toAccount.deposit(amount);
     }
 
-    private void resizeArray() {
-        Account[] newAccounts = new Account[accounts.length * 2];
-        System.arraycopy(accounts, 0, newAccounts, 0, accounts.length);
-        accounts = newAccounts;
+    public List<Account> filterAccountsByType(String accountType) {
+        return accountsMap.values().stream()
+                .filter(account -> account.getAccountType().equalsIgnoreCase(accountType))
+                .sorted(Comparator.comparing(Account::getAccountNumber))
+                .collect(Collectors.toList());
+    }
+
+    public List<Account> filterAccountsByBalanceRange(double minBalance, double maxBalance) {
+        return accountsMap.values().stream()
+                .filter(account -> account.getBalance() >= minBalance && account.getBalance() <= maxBalance)
+                .sorted(Comparator.comparing(Account::getBalance).reversed())
+                .collect(Collectors.toList());
+    }
+
+    public List<Account> filterAccountsByCustomerType(String customerType) {
+        return accountsMap.values().stream()
+                .filter(account -> account.getCustomer().getCustomerType().toString().equalsIgnoreCase(customerType))
+                .sorted(Comparator.comparing(Account::getAccountNumber))
+                .collect(Collectors.toList());
+    }
+
+    public double getAverageBalance() {
+        return accountsMap.values().stream()
+                .mapToDouble(Account::getBalance)
+                .average()
+                .orElse(0.0);
+    }
+
+    public long countAccountsByType(String accountType) {
+        return accountsMap.values().stream()
+                .filter(account -> account.getAccountType().equalsIgnoreCase(accountType))
+                .count();
+    }
+
+    public Account getAccountWithHighestBalance() {
+        return accountsMap.values().stream()
+                .max(Comparator.comparing(Account::getBalance))
+                .orElse(null);
+    }
+
+    public Account getAccountWithLowestBalance() {
+        return accountsMap.values().stream()
+                .min(Comparator.comparing(Account::getBalance))
+                .orElse(null);
+    }
+
+    public List<Account> getAllAccounts() {
+        return new ArrayList<>(accountsMap.values());
     }
 }
