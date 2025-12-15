@@ -126,4 +126,54 @@ public class AccountManager {
         fromAccount.withdraw(amount);
         toAccount.deposit(amount);
     }
+
+    public List<Account> filterAccountsByType(String accountType) {
+        return accountsMap.values().stream()
+                .filter(account -> account.getAccountType().equalsIgnoreCase(accountType))
+                .sorted(Comparator.comparing(Account::getAccountNumber))
+                .collect(Collectors.toList());
+    }
+
+    public List<Account> filterAccountsByBalanceRange(double minBalance, double maxBalance) {
+        return accountsMap.values().stream()
+                .filter(account -> account.getBalance() >= minBalance && account.getBalance() <= maxBalance)
+                .sorted(Comparator.comparing(Account::getBalance).reversed())
+                .collect(Collectors.toList());
+    }
+
+    public List<Account> filterAccountsByCustomerType(String customerType) {
+        return accountsMap.values().stream()
+                .filter(account -> account.getCustomer().getCustomerType().toString().equalsIgnoreCase(customerType))
+                .sorted(Comparator.comparing(Account::getAccountNumber))
+                .collect(Collectors.toList());
+    }
+
+    public double getAverageBalance() {
+        return accountsMap.values().stream()
+                .mapToDouble(Account::getBalance)
+                .average()
+                .orElse(0.0);
+    }
+
+    public long countAccountsByType(String accountType) {
+        return accountsMap.values().stream()
+                .filter(account -> account.getAccountType().equalsIgnoreCase(accountType))
+                .count();
+    }
+
+    public Account getAccountWithHighestBalance() {
+        return accountsMap.values().stream()
+                .max(Comparator.comparing(Account::getBalance))
+                .orElse(null);
+    }
+
+    public Account getAccountWithLowestBalance() {
+        return accountsMap.values().stream()
+                .min(Comparator.comparing(Account::getBalance))
+                .orElse(null);
+    }
+
+    public List<Account> getAllAccounts() {
+        return new ArrayList<>(accountsMap.values());
+    }
 }

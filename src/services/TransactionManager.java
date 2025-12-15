@@ -1,11 +1,14 @@
 package services;
 
 import models.Transaction;
+import models.enums.TransactionType;
 import utils.FileOperations;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TransactionManager {
 //    private Transaction[] transactions;
@@ -101,9 +104,36 @@ public class TransactionManager {
 
 
     public List<Transaction> getTransactionsByAccount(String accountNumber) {
-        return transactionsMap.getOrDefault(accountNumber, new ArrayList<>());
+        return transactionsMap.getOrDefault(accountNumber, new ArrayList<>()).stream()
+                .sorted(Comparator.comparing(Transaction::getDate).reversed())
+                .collect(Collectors.toList());
     }
-}
 
-    
+    public List<Transaction> getTransactionsByAccountSortedByAmount(String accountNumber) {
+        return transactionsMap.getOrDefault(accountNumber, new ArrayList<>()).stream()
+                .sorted(Comparator.comparing(Transaction::getAmount).reversed())
+                .collect(Collectors.toList());
+    }
+
+    public List<Transaction> filterTransactionsByType(String accountNumber, TransactionType type) {
+        return transactionsMap.getOrDefault(accountNumber, new ArrayList<>()).stream()
+                .filter(t -> t.getTransactionType() == type)
+                .sorted(Comparator.comparing(Transaction::getDate).reversed())
+                .collect(Collectors.toList());
+    }
+
+    public List<Transaction> filterTransactionsByAmountRange(String accountNumber, double minAmount, double maxAmount) {
+        return transactionsMap.getOrDefault(accountNumber, new ArrayList<>()).stream()
+                .filter(t -> t.getAmount() >= minAmount && t.getAmount() <= maxAmount)
+                .sorted(Comparator.comparing(Transaction::getDate).reversed())
+                .collect(Collectors.toList());
+    }
+
+    public double calculateTotalByType(String accountNumber, TransactionType type) {
+        return transactionsMap.getOrDefault(accountNumber, new ArrayList<>()).stream()
+                .filter(t -> t.getTransactionType() == type)
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+    }
+}    
 

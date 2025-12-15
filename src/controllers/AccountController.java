@@ -177,6 +177,7 @@ public class AccountController {
                 "ACC NO", "CUSTOMER NAME", "TYPE", "BALANCE", "STATUS");
         System.out.println("─".repeat(85));
         
+        List<Account> accounts = accountManager.getAllAccounts();
         accounts.forEach(account -> {
             System.out.println(account.getAccountSummary());
             System.out.println("─".repeat(85));
