@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class AccountManager {
-    private final HashMap<String, Account> accountsMap;
+    private final Map<String, Account> accountsMap;
 //    private Map<String, Account> accountMap = new
     //Use the map interface instead
     private static int accountCount;

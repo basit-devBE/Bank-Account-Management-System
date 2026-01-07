@@ -6,9 +6,15 @@ import models.exceptions.InsufficientfundsException;
 import models.exceptions.InvalidAmountException;
 import models.exceptions.OverdraftExceededException;
 
+// import java.util.concurrent.locks.Lock;
+
 public class CheckingAccount extends Account{
     private double overdraftLimit;
     private double monthlyFee;
+    private final Object withdrawLock = new Object();
+    private final Object depositLock = new Object();
+//    private Lock lock = new ReentrantLock();
+
 
     public CheckingAccount(String accountNumber, Customer accountHolder, double initialDeposit) {
         super(accountNumber, AccountType.CHECKING, accountHolder, initialDeposit);
@@ -51,36 +57,50 @@ public class CheckingAccount extends Account{
 
     @Override
     public void deposit(double amount) throws InvalidAmountException {
-        if (amount > 0) {
-            setBalance(getBalance() + amount);
-        } else {
-           throw new InvalidAmountException("Deposit amount must be positive.");
+        synchronized (depositLock) {
+            if (amount > 0) {
+                setBalance(getBalance() + amount);
+            } else {
+                throw new InvalidAmountException("Deposit amount must be positive.");
+            }
         }
+
     }
 
     @Override
     public void withdraw(double amount) throws InvalidAmountException, InsufficientfundsException, OverdraftExceededException {
-        if (amount <= 0) {
+        synchronized (withdrawLock) {
+            if (amount <= 0) {
+                throw new InvalidAmountException("Withdrawal amount must be positive.");
+            }
+
+            double availableFunds = getBalance() + overdraftLimit;
+            if (amount > availableFunds) {
+                throw new OverdraftExceededException("Withdrawal would exceed overdraft limit.");
+            }
+
+            setBalance(getBalance() - amount);
+        }if (amount <= 0) {
             throw new InvalidAmountException("Withdrawal amount must be positive.");
         }
-        
+
         double currentBalance = getBalance();
         double newBalance = currentBalance - amount;
-        
+
         // Check if withdrawal would exceed overdraft limit
         if (newBalance < -overdraftLimit) {
             throw new OverdraftExceededException(
-                "Withdrawal of $" + String.format("%.2f", amount) + 
-                " would exceed overdraft limit of $" + String.format("%.2f", overdraftLimit)
+                    "Withdrawal of $" + String.format("%.2f", amount) +
+                            " would exceed overdraft limit of $" + String.format("%.2f", overdraftLimit)
             );
         }
-        
+
         setBalance(newBalance);
-        
+
         // Notify if account is now overdrawn
         if (newBalance < 0) {
-            System.out.println("⚠ Account is now overdrawn. Overdraft used: $" + 
-                String.format("%.2f", Math.abs(newBalance)));
+            System.out.println("⚠ Account is now overdrawn. Overdraft used: $" +
+                    String.format("%.2f", Math.abs(newBalance)));
         }
     }
     
