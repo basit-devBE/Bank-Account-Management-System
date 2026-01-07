@@ -1,1 +1,32 @@
-ACCOUNT,ACC001,Mohammed Abdul Basit,Savings,590.00,Active,REGULAR
+ACCOUNT,ACC006,Mohammed Abdul Basit,Savings,500.00,Active,REGULAR
+ACCOUNT,ACC001,John Smith,Savings,5000.00,Active,REGULAR
+ACCOUNT,ACC002,Sarah Johnson,Savings,15000.00,Active,PREMIUM
+ACCOUNT,ACC003,Michael Chen,Checking,3000.00,Active,REGULAR
+ACCOUNT,ACC004,Emily Davis,Checking,12000.00,Active,PREMIUM
+ACCOUNT,ACC005,David Wilson,Savings,2500.00,Active,REGULAR
+ACCOUNT,ACC001,John Smith,Savings,5000.00,Active,REGULAR
+ACCOUNT,ACC002,Sarah Johnson,Savings,15000.00,Active,PREMIUM
+ACCOUNT,ACC003,Michael Chen,Checking,3000.00,Active,REGULAR
+ACCOUNT,ACC004,Emily Davis,Checking,12000.00,Active,PREMIUM
+ACCOUNT,ACC005,David Wilson,Savings,2500.00,Active,REGULAR
+ACCOUNT,ACC001,John Smith,Savings,5000.00,Active,REGULAR
+ACCOUNT,ACC002,Sarah Johnson,Savings,15000.00,Active,PREMIUM
+ACCOUNT,ACC003,Michael Chen,Checking,3000.00,Active,REGULAR
+ACCOUNT,ACC004,Emily Davis,Checking,12000.00,Active,PREMIUM
+ACCOUNT,ACC005,David Wilson,Savings,2500.00,Active,REGULAR
+ACCOUNT,ACC001,John Smith,Savings,5000.00,Active,REGULAR
+ACCOUNT,ACC002,Sarah Johnson,Savings,15000.00,Active,PREMIUM
+ACCOUNT,ACC003,Michael Chen,Checking,3000.00,Active,REGULAR
+ACCOUNT,ACC004,Emily Davis,Checking,12000.00,Active,PREMIUM
+ACCOUNT,ACC005,David Wilson,Savings,2500.00,Active,REGULAR
+ACCOUNT,ACC006,Mohammed Abdil Basit,Savings,2500.00,Active,REGULAR
+ACCOUNT,ACC001,John Smith,Savings,5000.00,Active,REGULAR
+ACCOUNT,ACC002,Sarah Johnson,Savings,15000.00,Active,PREMIUM
+ACCOUNT,ACC003,Michael Chen,Checking,3000.00,Active,REGULAR
+ACCOUNT,ACC004,Emily Davis,Checking,12000.00,Active,PREMIUM
+ACCOUNT,ACC005,David Wilson,Savings,2500.00,Active,REGULAR
+ACCOUNT,ACC001,John Smith,Savings,5000.00,Active,REGULAR
+ACCOUNT,ACC002,Sarah Johnson,Savings,15000.00,Active,PREMIUM
+ACCOUNT,ACC003,Michael Chen,Checking,3000.00,Active,REGULAR
+ACCOUNT,ACC004,Emily Davis,Checking,12000.00,Active,PREMIUM
+ACCOUNT,ACC005,David Wilson,Savings,2500.00,Active,REGULAR
