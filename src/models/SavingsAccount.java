@@ -50,11 +50,13 @@ public class SavingsAccount extends Account{
     }
 
     @Override
-    public synchronized void deposit(double amount) throws InvalidAmountException {
-        if (amount > 0) {
-            setBalance(getBalance() + amount);
-        } else {
-            throw new InvalidAmountException("Deposit amount must be positive.");
+    public  void deposit(double amount) throws InvalidAmountException {
+        synchronized (this){
+            if (amount > 0) {
+                setBalance(getBalance() + amount);
+            } else {
+                throw new InvalidAmountException("Deposit amount must be positive.");
+            }
         }
     }
 

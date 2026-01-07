@@ -96,6 +96,71 @@ public class FileOperations {
         writeAccountToFile(account, ACCOUNTS_FILE);
     }
     
+    /**
+     * Update account balance in the accounts file
+     * Rewrites the entire file with updated account information
+     */
+    public void updateAccountBalance(Account account) {
+        updateAccountBalance(account, ACCOUNTS_FILE);
+    }
+    
+    public void updateAccountBalance(Account account, String filePath) {
+        try {
+            if (!fileExists(filePath)) {
+                // If file doesn't exist, just write the account
+                writeAccountToFile(account, filePath);
+                return;
+            }
+            
+            // Read all lines from file
+            List<String> lines = Files.readAllLines(Paths.get(filePath));
+            List<String> updatedLines = new java.util.ArrayList<>();
+            boolean accountFound = false;
+            
+            for (String line : lines) {
+                if (line.trim().startsWith("ACCOUNT,")) {
+                    String[] parts = line.split(",");
+                    if (parts.length >= 2 && parts[1].trim().equals(account.getAccountNumber())) {
+                        // Update this account's line with new balance
+                        String updatedLine = String.format("ACCOUNT,%s,%s,%s,%.2f,%s,%s",
+                                account.getAccountNumber(),
+                                account.getAccountHolder().getName(),
+                                account.getAccountType(),
+                                account.getBalance(),
+                                account.getStatus(),
+                                account.getAccountHolder().getCustomerType()
+                        );
+                        updatedLines.add(updatedLine);
+                        accountFound = true;
+                    } else {
+                        updatedLines.add(line);
+                    }
+                } else {
+                    updatedLines.add(line);
+                }
+            }
+            
+            // If account wasn't found in file, add it
+            if (!accountFound) {
+                String newLine = String.format("ACCOUNT,%s,%s,%s,%.2f,%s,%s",
+                        account.getAccountNumber(),
+                        account.getAccountHolder().getName(),
+                        account.getAccountType(),
+                        account.getBalance(),
+                        account.getStatus(),
+                        account.getAccountHolder().getCustomerType()
+                );
+                updatedLines.add(newLine);
+            }
+            
+            // Write all lines back to file
+            Files.write(Paths.get(filePath), updatedLines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            
+        } catch (IOException e) {
+            System.out.println("✗ Error updating account balance: " + e.getMessage());
+        }
+    }
+    
     // Write multiple accounts
     public void writeAccountsToFile(Account[] accounts, String filePath) {
         try {

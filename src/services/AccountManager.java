@@ -6,20 +6,18 @@ import models.exceptions.InvalidAmountException;
 import models.exceptions.OverdraftExceededException;
 import utils.FileOperations;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AccountManager {
-    private HashMap<String, Account> accountsMap = new HashMap<>();
-    private int accountCount;
-    private FileOperations fileOps = new FileOperations();
+    private final HashMap<String, Account> accountsMap;
+//    private Map<String, Account> accountMap = new
+    //Use the map interface instead
+    private static int accountCount;
+    private final FileOperations fileOps = new FileOperations();
     
     public AccountManager() {
         this.accountsMap = new HashMap<>();
-        this.accountCount = 0;
     }
     
     public String generateAccountNumber() {
@@ -70,7 +68,7 @@ public class AccountManager {
         System.out.printf("%-10s | %-20s | %-10s | %-15s | %-10s%n",
                 "ACC NO", "CUSTOMER NAME", "TYPE", "BALANCE", "STATUS");
         System.out.println("─".repeat(85));
-        
+
         accountsMap.values().stream()
                 .sorted(Comparator.comparing(Account::getAccountNumber))
                 .forEach(account -> {

@@ -4,6 +4,7 @@ import models.enums.AccountType;
 import models.exceptions.InsufficientfundsException;
 import models.exceptions.InvalidAmountException;
 import models.exceptions.OverdraftExceededException;
+import utils.FileOperations;
 
 public abstract class Account {
     private String accountNumber;
@@ -11,6 +12,7 @@ public abstract class Account {
     private double balance;
     private String status;
     private static int accountCounter = 0;
+    private static final FileOperations fileOps = new FileOperations();
 
     public Account(String accountNumber, AccountType accountType, Customer accountHolder, double initialDeposit) {
         this.accountNumber = accountNumber;
@@ -42,6 +44,8 @@ public abstract class Account {
     
     public void setBalance(double balance) {
         this.balance = balance;
+        // Update balance in file whenever it changes
+        fileOps.updateAccountBalance(this);
     }
     
     public String getStatus() {

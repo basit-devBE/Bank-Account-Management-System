@@ -4,21 +4,18 @@ import models.Transaction;
 import models.enums.TransactionType;
 import utils.FileOperations;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TransactionManager {
 //    private Transaction[] transactions;
-    private HashMap<String, List<Transaction>> transactionsMap = new HashMap<>();
-    private int transactionCount;
-    private FileOperations fileOps = new FileOperations();
+
+    private final Map<String, List<Transaction>> transactionsMap;
+    private static int transactionCount;
+    private final FileOperations fileOps = new FileOperations();
 
     public TransactionManager() {
-        this.transactionsMap = new HashMap<>(); 
-        this.transactionCount = 0;
+        this.transactionsMap = new HashMap<>();
     }
 
     public String generateTransactionId() {
